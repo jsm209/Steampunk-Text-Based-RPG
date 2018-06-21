@@ -105,8 +105,5 @@ def storyline():
 storyline()
 
 
-# TODO LIST:
-# Create a player object that has stats and hunger and personal actions like eating, resting, moods, inventory, stress.
-# get rid of the sleep time
-# Create an enemy object and a method that generates random enemies based on the STEP.
-# Plan out a branch every 3 STEPS, with the tenth step of every tree being an ending.
+
+

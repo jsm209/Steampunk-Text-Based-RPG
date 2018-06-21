@@ -22,6 +22,8 @@ class Player:
                       "HP": round(100 - abs(self.OPTIMUM_AGE-age)),
                       "ATK": round((height/self.OPTIMUM_HEIGHT) * 100),
                       "DEF": 0,
+                      "Food": 0,
+                      "Credits": 0
                       "Inventory": []
         }
 
@@ -30,6 +32,15 @@ class Player:
         for x in self.stats:
             total = total + x + ": " + str(self.stats[x]) + "\n"
         return total
+
+
+    def eat(self):
+        if self.stats["Food"] - self.stats["Hunger"] > 0:
+            self.stats["Food"] = self.stats["Food"] - self.stats["Hunger"]
+        else
+            self.stats["Health"] -=
+
+
 
 
 p1 = Player("Joshua", 180, 58, 19)

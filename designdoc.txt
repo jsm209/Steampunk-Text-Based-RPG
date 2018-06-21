@@ -1,0 +1,108 @@
+CONCEPT:
+You have 20 days to spend before amassing a large enough crew before fighting The Maw.
+The player must sucessfully manage the amount of crew, food, credits, fuel, hull, stress, and wisdom to sucessfully
+defeat The Maw.
+Food, credits, fuel, hull, and stress are all resources to manage,
+While crew and wisdom need to be amassed to win the game.
+The game is lost if the player doesn't gain enough crew and/or wisdom, or if they make the wrong choices.
+A choice is "wrong" when the player doesn't read and pick up on context clues.
+
+Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
+
+
+GAMEPLAY:
+Each action, you and your crew can:
+Explore - get a random traveling encounter and an exploration encounter
+Dock - Take shelter and spend the night at a nearby isle. Must dock for 2 days.
+Work - Take a random job to earn a random amount of credits.
+Research - Attempt to find an important piece of information regarding Flux or The Maw.
+Mine - Mine unrefined Flux to be used for fuel.
+type examine explore for more information about explore, etc.
+
+Exploration may cause crew to die, but some portion of the crew will always flee from fear.
+Raises stress, depletes food, may deplete hull, costs fuel, but has high risk high reward outcomes.
+
+Docking may or may not cause crew to come or leave, although it is the most likely choice to reliably gain crew.
+It reduces stress, gives food and fuel, repairs hull, costs credits, and must dock for 2 days given flight regulations and docking time.
+
+Work is a no risk way to earn credits, and has no effect on stress, but will deplete food. More work can be done
+with a larger crew, resulting in jobs with larger paychecks.
+
+Research may cause crew to die, but some portion of the crew will always flee from fear.
+Greatly increases stress, depletes food, costs credits, but has high risk high reward outcomes.
+
+Mine reliably gives fuel, depletes food, and gains crew because miners hate their jobs.
+
+
+MECHANICS/IMPLEMENTATION:
+Docking, mining, and working will always give and take a random amount of low sided dice, like d3, d4, and d6, and always have the same dialogue.
+They are meant to be mechanical actions that aid the research and exploration choices.
+
+Have an encounter class that has a description field, question field, result 1 field, and result 2 field.
+Each of the result fields will be an array/list of integers of size 7 where each index represents a resource.
+The encounter class should have methods to
+print the description
+ask the question, and call the right reward
+a reward method that takes the current array of resources and adds the reward's array to it, returning the new array
+
+Every encounter will be created using this class, and sorted into different arrays, one for traveling, one for exploring
+and one for researching.
+
+
+INTRODUCTION:
+You're high above the clouds with your arms out wide, gliding over the floating kingdom of Zernear.
+You fly over and under floating isles, weaving inbetween the roots that once held these islands to the ground 1000 years ago.
+You realize that you've never felt so free, so light, exploring the expanse of the sky kingdom to your heart's content.
+Almost immedietly, as if waiting for a cue, you feel a slight tugging. It begins to pull harder, until you realize
+that you're no longer in control. Below, the once pristine clouds slowly turn to dark tufts, reminicient of exhaust from
+many of the surrounding airships. The clouds begin to swirl into a vortex, with a dark void lying at its center.
+As you look to your left, you can see the expressions of despair and nervousness on the faces of the crew members
+aboard an airship, who are frantically flustering about, trying to drive away from the eye of the storm, but it is too late.
+Their massive size only amplified the power of the winds, and they're quickly sucked into the vortex, ripped apart into
+silence. Several surrounding isles are now meteors hurling towards the center, almost disintegrating completely by the
+time they reach the center of the void. You thrust your arms out to your sides harder, thinking that with enough willpower,
+you can fly away, but the pull of the hurricane proves too strong. As you creep closer to death, you look down at the
+center and can smell the putrid scent of blood and rotten flesh. You spot teeth, with some crew members desperately clinging
+trying not to fall to their doom. You slip into the darkness, only to have your ears pierced by a roar that would
+cause even your village elders to hide in fear.
+
+Do you:
+Dive headfirst, shooting faster into the void.
+  Fearless, start with a stress of 0.
+Reach your arms out the furthest you've ever reached, in an attempt to glide away from your impending doom.
+  Optimistic, start with a stress of 5.
+Pray to your God and accept your fate.
+  Pragmatic, start with a stress of 10.
+Kick and punch into the darkness in an attempt to hurt the beast.
+  Determined, start with a stress of 25.
+Scream out and make known to the world who you love and what you're sorry for.
+  Regretful, start with a stress of 15
+
+
+Just then, you awake in a pool of sweat, to the sound of your alarm clock ringing. You're quick to remember your dream
+and instinctually cut another notch into the side of your bedpost. One.. two.. four.. ten.... This marks the thirteenth
+day in a row you've had this nightmare, and you sink into a depression with a sullen look on your face. You gaze outside
+and see children playing, windmills churning, massive buildings and airships swirling, all around the floating isle you call home.
+All this will be gone. The prophesy from your village elders proved true. Thirteen consecutive days of a dream almost
+always accurately predicted the future, supported only by a handful of visions, of which The Great Vision is the most well known.
+#
+209 years ago, a great heroine had a reoccuring dream for thirteen days in a row. She described it as a calamity, and in an effort to
+avoid the terrible fate, the kingdom of Zernear was torn from the Earth by ancient heroes, and levitated with Flux, an unwieldly
+ancient power source. It was in an effort to flee from The Maw, a god-like beast of unknown origins, sealed away with a
+collosal mechanical clamp constructed from Flux by the Zernear's best engineers and mechanics. Many docurments about
+the event were lost, because only thirty percent of the kingdom was able to be made airborne. The remaining population
+was left for dead as there was a lack of flight technology and Flux capacity. In order to avoid such a devestating blow
+in the future, the king of Zernear devoted almost all resources towards improving flight technology and Flux research.
+#
+Exactly thirteen days ago, all of Zernear heard an unusual creaking
+and snapping, conjuring memories of the tale, but ultimately assumed to simply be a Flux mining rig malfunction.
+Your visions and memories of the history of Zernear only point to one logical explanation.
+You quickly make the Kingdom know your visions, and the current King, makes the pragmatic decision to actually check
+The Maw's prison...
+
+... The King's technicians reported that the beast is roaring and struggling, slowly weakening the grip of the
+floating prison. They estimate that even with continuous reinforcement and additional Flux that they can hold out for
+another twenty days before The Maw escapes Zernear's hold. A call has been made to all citizens of Zernear to either
+help find a solution, or band together to take down the beast.
+
+Determined to be like the heroine of old, you set out in your airship and begin your journey.
