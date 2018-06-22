@@ -1,4 +1,13 @@
-CONCEPT:
+###########
+#TODO LIST#
+###########
+add work, mine, and dock into player class.
+document player class
+alter game class to use new objects/ fix game flow
+
+#########
+#CONCEPT#
+#########
 You have 20 days to spend before amassing a large enough crew before fighting The Maw.
 The player must sucessfully manage the amount of crew, food, credits, fuel, hull, stress, and wisdom to sucessfully
 defeat The Maw.
@@ -9,8 +18,9 @@ A choice is "wrong" when the player doesn't read and pick up on context clues.
 
 Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
 
-
-GAMEPLAY:
+##########
+#GAMEPLAY#
+##########
 Each action, you and your crew can:
 Explore - get a random traveling encounter and an exploration encounter
 Dock - Take shelter and spend the night at a nearby isle. Must dock for 2 days.
@@ -33,8 +43,9 @@ Greatly increases stress, depletes food, costs credits, but has high risk high r
 
 Mine reliably gives fuel, depletes food, and gains crew because miners hate their jobs.
 
-
-MECHANICS/IMPLEMENTATION:
+##########################
+#MECHANICS/IMPLEMENTATION#
+##########################
 Docking, mining, and working will always give and take a random amount of low sided dice, like d3, d4, and d6, and always have the same dialogue.
 They are meant to be mechanical actions that aid the research and exploration choices.
 
@@ -45,11 +56,17 @@ print the description
 ask the question, and call the right reward
 a reward method that takes the current array of resources and adds the reward's array to it, returning the new array
 
-Every encounter will be created using this class, and sorted into different arrays, one for traveling, one for exploring
-and one for researching.
+Every encounter will be created using this class, and sorted into different arrays, one for traveling, one for exploring and one for researching. That way, I can randomly pick
+an encounter from each list of encounters.
 
+For the player class, I want to keep track of the resources, and have a method that given a list of resources, will add them to the current player's resources. Additionally, the player will be able to dock, mine, and work.
 
-INTRODUCTION:
+I also want a dice class, which can roll itself and be a d2, d3, d4, etc, depending on the
+amount of sides I give it.
+
+##############
+#INTRODUCTION#
+##############
 You're high above the clouds with your arms out wide, gliding over the floating kingdom of Zernear.
 You fly over and under floating isles, weaving inbetween the roots that once held these islands to the ground 1000 years ago.
 You realize that you've never felt so free, so light, exploring the expanse of the sky kingdom to your heart's content.
@@ -85,7 +102,7 @@ day in a row you've had this nightmare, and you sink into a depression with a su
 and see children playing, windmills churning, massive buildings and airships swirling, all around the floating isle you call home.
 All this will be gone. The prophesy from your village elders proved true. Thirteen consecutive days of a dream almost
 always accurately predicted the future, supported only by a handful of visions, of which The Great Vision is the most well known.
-#
+
 209 years ago, a great heroine had a reoccuring dream for thirteen days in a row. She described it as a calamity, and in an effort to
 avoid the terrible fate, the kingdom of Zernear was torn from the Earth by ancient heroes, and levitated with Flux, an unwieldly
 ancient power source. It was in an effort to flee from The Maw, a god-like beast of unknown origins, sealed away with a
@@ -93,7 +110,7 @@ collosal mechanical clamp constructed from Flux by the Zernear's best engineers 
 the event were lost, because only thirty percent of the kingdom was able to be made airborne. The remaining population
 was left for dead as there was a lack of flight technology and Flux capacity. In order to avoid such a devestating blow
 in the future, the king of Zernear devoted almost all resources towards improving flight technology and Flux research.
-#
+
 Exactly thirteen days ago, all of Zernear heard an unusual creaking
 and snapping, conjuring memories of the tale, but ultimately assumed to simply be a Flux mining rig malfunction.
 Your visions and memories of the history of Zernear only point to one logical explanation.
