@@ -5,16 +5,13 @@ import time
 #############
 
 # Tracks the amount of progress the player made.
-STEP = 1
+TURN = 1
 
 # Base list of valid actions
 VALID_ACTIONS = ["walk forward", "walk backward", "examine", "inventory", "status", "mood"]
 
 # Additional actions added over time
 ADD_ACTIONS = []
-
-# Base list of combat options and abilities
-SKILLS = []
 
 
 # Post: Presents an introduction
@@ -32,11 +29,11 @@ def opening_story():
 # Pre: Given a valid integer.
 # Post: Will walk that far in the positive or negative direction as long as the total steps is greater than 0.
 def walk(num):
-    global STEP
-    if STEP + num < 1:
+    global TURN
+    if TURN + num < 1:
         print("You quickly bump into a wall.")
     else:
-        STEP += num
+        TURN += num
 
 
 # Pre: Given a list of possible actions, and an additional list of extra actions,
@@ -81,24 +78,24 @@ def action_exploration(actions, extra=[]):
 
 # Given
 def examine():
-    global STEP
+    global TURN
     add_actions = []
-    if STEP == 1:
+    if TURN == 1:
         print("You're in a cave with a pool of water in the center of the room.")
         print("Upon close examination, you see a wrench in the wreckage pile.")
         add_actions = ["pick up wrench"]
-    elif STEP == 2:
+    elif TURN == 2:
         print("You're on a cliff overlooking a valley of clouds.")
-    elif STEP == 3:
+    elif TURN == 3:
         print("There are scattered mechanical parts and.. uh.")
     return add_actions
 
 
 def storyline():
-    global STEP
+    global TURN
     opening_story()
-    while STEP <= 10:
-        print("Your STEPS is " + str(STEP))
+    while TURN <= 10:
+        print("Your TURNS is " + str(TURN))
         action_exploration(VALID_ACTIONS, examine())
 
 
