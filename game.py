@@ -15,15 +15,31 @@ ADD_ACTIONS = []
 
 
 # Post: Presents an introduction
+# Give opening text
 def opening_story():
-    print("You slowly come to your senses as you wake up in a pool of water.")
-    time.sleep(5)
-    print("Moss, scattered nuts and bolts, and patches of dead grass surround your pool.")
-    time.sleep(5)
-    print("You soon come to realize you're in a cave, and light peers in from an opening.")
-    time.sleep(5)
-    print("...")
-    time.sleep(5)
+
+
+# Gets a random entry from the list
+def random_list_entry():
+
+
+# Advances the turn counter by 1
+def next_turn(self):
+    global TURN
+    self.TURN += 1
+
+def single_player_game(self, player):
+    global TURN
+    while TURN <= 20:
+        # "It is the start of day X. You check your resources:"
+        # call player's status method.
+        # ask the player what action they want to perform.
+        # if it is not an encounter, call the player's mine, work, dock method.
+        # if it is an encounter, get a random list entry from the appropriate list of encounters depending if
+        #   the player chose research or exploration
+        # At the end of the turn, advance the counter by 1.
+
+
 
 
 # Pre: Given a valid integer.
@@ -99,7 +115,20 @@ def storyline():
         action_exploration(VALID_ACTIONS, examine())
 
 
-storyline()
+# Get a method that creates encounter objects from a text file, and adds them to a list while there is still text.
+def build_encounters(file):
+    infile = file(file, "r")
+    encounters = []
+    line = infile.readLine()
+    while infile != "" :
+        description = ""
+        encounter = ""
+        if line == "description":
+            while line != "enounter":
+                description = description + infile.readLine()
+        elif line == "encounter"
+            encounter = encounter + infile.readLine()
+
 
 
 
