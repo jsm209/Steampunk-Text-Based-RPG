@@ -33,9 +33,7 @@ from dice import *
 #   Set the encounter's mod (modifier to roll upon choosing choice1)
 
 
-
 class Encounter:
-
     # Pre: Given a description, question, choice1, and choice2 of type String, where the description represents
     # the context of the encounter, the question represents the dilemma for the player, choice1 represents the decision
     # the mod will be applied to, and choice2 represents the decision without the mod,

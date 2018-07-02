@@ -117,17 +117,47 @@ def storyline():
 
 # Get a method that creates encounter objects from a text file, and adds them to a list while there is still text.
 def build_encounters(file):
-    infile = file(file, "r")
     encounters = []
-    line = infile.readLine()
+    infile = file(file, "r")
+    # line = infile.readLine()
     while infile != "" :
+        # Store basic parameters for an encounter
         description = ""
         encounter = ""
-        if line == "description":
-            while line != "enounter":
+        win = ""
+        lose = ""
+        mod = 0
+        rating = 10
+        if infile.readLine() == "description:":
+            while infile.readLine() != "question:":
                 description = description + infile.readLine()
-        elif line == "encounter"
-            encounter = encounter + infile.readLine()
+        elif infile.readLine() == "encounter":
+            while infile.readLine() != "win:":
+                encounter = encounter + infile.readLine()
+        elif infile.readLine() == "win:":
+            while infile.readLine() != "reward:":
+                win = win + infile.readLine()
+        elif infile.readLine() == "reward:":
+            # put the following seven numbers into a list.
+        elif infile.readLine() == "lose:":
+            while infile.readLine() != "punish:":
+                lose = lose + infile.readLine()
+        elif infile.readLine() == "punish:":
+            # put the following seven numbers into a list.
+        elif infile.readLine() == "mod:":
+            mod = infile.readLine()
+        elif infile.readLine() == "rating:":
+            rating = infile.readLine()
+        else:
+            raise Exception("Given file not in correct format.")
+            return null
+        # Things to test:
+            # Does reading lines of text actually store it correctly in the encounter?
+            # Does creating new lines in the text file translate correctly to encounter?
+
+        # TODO:
+            # Find a way to parse text into a list.
+            # Actually import the encounter class and build the encounter, then test it using the _repr_ command.
 
 
 
