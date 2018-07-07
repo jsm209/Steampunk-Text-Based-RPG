@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>encounterGroup.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(128,128,128); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(204,120,50); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+encounterGroup.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0"># EncounterGroup keeps track of a group of encounters. It is able to store encounters,</span><span class="s1"> 
+</span><span class="s0"># and retrieve random encounters.</span><span class="s1"> 
+ 
+</span><span class="s2">import </span><span class="s1">random 
+ 
+ 
+</span><span class="s2">class </span><span class="s1">encounterGroup: 
+ 
+    </span><span class="s2">def </span><span class="s1">__init__(self): 
+        self.encounters = [] 
+ 
+    </span><span class="s2">def </span><span class="s1">add(self</span><span class="s2">, </span><span class="s1">encounter): 
+        self.encounters.append(encounter) 
+ 
+    </span><span class="s2">def </span><span class="s1">get_random_encounter(self): 
+        </span><span class="s2">return </span><span class="s1">random.choice(self.encounters)</span></pre>
+</body>
+</html>

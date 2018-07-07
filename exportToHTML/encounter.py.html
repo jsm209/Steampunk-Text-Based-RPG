@@ -1,0 +1,132 @@
+<html>
+<head>
+<title>encounter.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(204,120,50); }
+.s1 { color: rgb(169,183,198); }
+.s2 { color: rgb(128,128,128); }
+.s3 { color: rgb(106,135,89); }
+.s4 { color: rgb(104,151,187); }
+</style>
+</head>
+<BODY BGCOLOR="#2b2b2b">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+encounter.py</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">from </span><span class="s1">dice </span><span class="s0">import </span><span class="s1">* 
+ 
+</span><span class="s2"># Encounter lets you create encounters with a description, question, choice1, choice2, mod, and rating.</span><span class="s1"> 
+</span><span class="s2"># An Encounter will reward the player if their check passes the rating.</span><span class="s1"> 
+</span><span class="s2"># The player will always know their initial roll, but never the mod or rating for the Encounter.</span><span class="s1"> 
+</span><span class="s2"># This way, even though the same encounter may occur more than once, they can have varying difficulties.</span><span class="s1"> 
+</span><span class="s2"># You can set the win results and loss results, as well as the mod and rating with the following setters:</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2">#   set_reward(self, text, reward):</span><span class="s1"> 
+</span><span class="s2">#   Will deliver the given text upon winning, and return the given reward, which can later be added to their resources.</span><span class="s1"> 
+</span><span class="s2">#   The reward must be in a list in the standard resource order: [Credits, Food, Fuel, Hull, Stress, Crew, Wisdom]</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2">#   set_loss(self, text, punish):</span><span class="s1"> 
+</span><span class="s2">#   Will deliver the given text upon losing, and return the given punish, which can later be added to their resources.</span><span class="s1"> 
+</span><span class="s2">#   The reward must be in a list in the standard resource order: [Credits, Food, Fuel, Hull, Stress, Crew, Wisdom]</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2">#   set_mod(self, mod):</span><span class="s1"> 
+</span><span class="s2">#   Changes the Encounter's mod to the new given mod.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2">#   set_rating(self, rating):</span><span class="s1"> 
+</span><span class="s2">#   Changes the Encounter's rating to the new given rating.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># Encounters will use this information to present the player with two choices, of which the mod will be</span><span class="s1"> 
+</span><span class="s2"># applied when they choose choice1. The mod can be a positive or negative number, so choice1 won't always be good.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># get_outcome() will return a list with the appropriate resource changes, which can be added on to the player's</span><span class="s1"> 
+</span><span class="s2"># resources. It will also print all the appropriate text as it works through the encounter.</span><span class="s1"> 
+</span><span class="s2">#</span><span class="s1"> 
+</span><span class="s2"># Process to create new encounters:</span><span class="s1"> 
+</span><span class="s2">#   Create a new encounter object, feeding it the correct description with a dilemma, choice1, and choice2.</span><span class="s1"> 
+</span><span class="s2">#   Set the encounter's reward and loss.</span><span class="s1"> 
+</span><span class="s2">#   Set the encounter's rating (score to pass)</span><span class="s1"> 
+</span><span class="s2">#   Set the encounter's mod (modifier to roll upon choosing choice1)</span><span class="s1"> 
+ 
+ 
+</span><span class="s0">class </span><span class="s1">Encounter: 
+    </span><span class="s2"># Pre: Given a description, question, choice1, and choice2 of type String, where the description represents</span><span class="s1"> 
+    </span><span class="s2"># the context of the encounter, the question represents the dilemma for the player, choice1 represents the decision</span><span class="s1"> 
+    </span><span class="s2"># the mod will be applied to, and choice2 represents the decision without the mod,</span><span class="s1"> 
+    </span><span class="s2"># Post: Will construct an Encounter with that data, that has no rewards or punishments, no win or loss text,</span><span class="s1"> 
+    </span><span class="s2"># and a mod and rating value of 0.</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">__init__(self</span><span class="s0">, </span><span class="s1">description</span><span class="s0">, </span><span class="s1">choice1</span><span class="s0">, </span><span class="s1">choice2</span><span class="s0">, </span><span class="s1">win</span><span class="s0">, </span><span class="s1">reward</span><span class="s0">, </span><span class="s1">lose</span><span class="s0">, </span><span class="s1">punish</span><span class="s0">, </span><span class="s1">mod</span><span class="s0">, </span><span class="s1">rating): 
+        self.description = description 
+        self.choice1 = choice1 
+        self.choice2 = choice2 
+        self.win = win 
+        self.reward = reward 
+        self.lose = lose 
+        self.punish = punish 
+        self.mod = mod 
+        self.rating = rating 
+ 
+    </span><span class="s0">def </span><span class="s1">__repr__(self): 
+        </span><span class="s0">return </span><span class="s3">'New Encounter</span><span class="s0">\n</span><span class="s3">Description=%s</span><span class="s0">\n</span><span class="s3">Win=%s</span><span class="s0">\n</span><span class="s3">%s</span><span class="s0">\n</span><span class="s3">Lose=%s</span><span class="s0">\n</span><span class="s3">%s</span><span class="s0">\n</span><span class="s3">Mod=%s</span><span class="s0">\n</span><span class="s3">Rating=%s' </span><span class="s1">\ 
+        % (self.description</span><span class="s0">, </span><span class="s1">self.win</span><span class="s0">, </span><span class="s1">self.reward</span><span class="s0">, </span><span class="s1">self.lose</span><span class="s0">, </span><span class="s1">self.punish</span><span class="s0">, </span><span class="s1">self.mod</span><span class="s0">, </span><span class="s1">self.rating) 
+ 
+    </span><span class="s2"># Post: Will return a list of the the values of resources that was the outcome of the encounter.</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">get_outcome(self): 
+        print(self.description) 
+        choice = self.decision() 
+        d = Dice() 
+        check = d.roll(</span><span class="s4">20</span><span class="s1">) 
+        </span><span class="s0">if </span><span class="s1">choice == </span><span class="s4">1</span><span class="s1">: 
+            check += self.mod 
+        </span><span class="s0">if </span><span class="s1">check &gt;= self.rating: 
+            print(self.win) 
+            </span><span class="s0">return </span><span class="s1">self.reward 
+        </span><span class="s0">else</span><span class="s1">: 
+            print(self.lose) 
+            </span><span class="s0">return </span><span class="s1">self.punish 
+ 
+    </span><span class="s2"># Post: Uses the encounter's choice1 and choice2 instance attributes to ask a question, returning 1 for choosing</span><span class="s1"> 
+    </span><span class="s2"># choice1, and 2 for choosing choice2.</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">decision(self): 
+        print(</span><span class="s3">&quot;Do you...&quot;</span><span class="s1">) 
+        print(</span><span class="s3">&quot;1: &quot; </span><span class="s1">+ str(self.choice1)) 
+        print(</span><span class="s3">&quot;2: &quot; </span><span class="s1">+ str(self.choice2)) 
+        </span><span class="s0">while True</span><span class="s1">: 
+            choice = </span><span class="s0">None</span><span class="s1"> 
+            </span><span class="s0">try</span><span class="s1">: 
+                choice = int(input(</span><span class="s3">&quot;[ENTER 1 OR 2: ]&quot;</span><span class="s1">)) 
+            </span><span class="s0">except </span><span class="s1">ValueError </span><span class="s0">or </span><span class="s1">choice </span><span class="s0">not in </span><span class="s1">range(</span><span class="s4">1</span><span class="s0">, </span><span class="s4">3</span><span class="s1">): 
+                print(</span><span class="s3">&quot;That isn't an option.&quot;</span><span class="s1">) 
+                </span><span class="s0">continue</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s1">choice </span><span class="s0">in </span><span class="s1">range(</span><span class="s4">1</span><span class="s0">, </span><span class="s4">3</span><span class="s1">): 
+                </span><span class="s0">return </span><span class="s1">choice 
+ 
+    </span><span class="s2"># Pre: Given text that represents the win message, and the reward, which is a list containing values to be added</span><span class="s1"> 
+    </span><span class="s2"># to each player resource,</span><span class="s1"> 
+    </span><span class="s2"># Post: Sets this encounter's win message and reward to the given values.</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">set_reward(self</span><span class="s0">, </span><span class="s1">text</span><span class="s0">, </span><span class="s1">reward): 
+        self.win = text 
+        self.reward = reward 
+ 
+    </span><span class="s2"># Pre: Given text that represents the loss message, and the punishment, which is a list containing values to be</span><span class="s1"> 
+    </span><span class="s2"># added to each player resource,</span><span class="s1"> 
+    </span><span class="s2"># Post: Sets this encounter's loss message and punish to the given values.</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">set_loss(self</span><span class="s0">, </span><span class="s1">text</span><span class="s0">, </span><span class="s1">punish): 
+        self.lose = text 
+        self.punish = punish 
+ 
+    </span><span class="s2"># Pre: Given an integer,</span><span class="s1"> 
+    </span><span class="s2"># Post: Sets this encounter's mod value to the given value.</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">set_mod(self</span><span class="s0">, </span><span class="s1">mod): 
+        self.mod = mod 
+ 
+    </span><span class="s2"># Pre: Given an integer,</span><span class="s1"> 
+    </span><span class="s2"># Post: Sets this encounter's rating value to the given value.</span><span class="s1"> 
+    </span><span class="s0">def </span><span class="s1">set_rating(self</span><span class="s0">, </span><span class="s1">rating): 
+        self.rating = rating</span></pre>
+</body>
+</html>

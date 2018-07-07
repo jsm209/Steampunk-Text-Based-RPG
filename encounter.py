@@ -27,7 +27,7 @@ from dice import *
 # resources. It will also print all the appropriate text as it works through the encounter.
 #
 # Process to create new encounters:
-#   Create a new encounter object, feeding it the correct description, question, choice1, and choice2.
+#   Create a new encounter object, feeding it the correct description with a dilemma, choice1, and choice2.
 #   Set the encounter's reward and loss.
 #   Set the encounter's rating (score to pass)
 #   Set the encounter's mod (modifier to roll upon choosing choice1)
@@ -39,22 +39,20 @@ class Encounter:
     # the mod will be applied to, and choice2 represents the decision without the mod,
     # Post: Will construct an Encounter with that data, that has no rewards or punishments, no win or loss text,
     # and a mod and rating value of 0.
-    def __init__(self, description, question, choice1, choice2):
+    def __init__(self, description, choice1, choice2, win, reward, lose, punish, mod, rating):
         self.description = description
-        self.question = question
         self.choice1 = choice1
         self.choice2 = choice2
-
-        self.win = ""
-        self.reward = []
-        self.lose = ""
-        self.punish = []
-        self.mod = 0
-        self.rating = 0
+        self.win = win
+        self.reward = reward
+        self.lose = lose
+        self.punish = punish
+        self.mod = mod
+        self.rating = rating
 
     def __repr__(self):
-        return 'New Encounter\nDescription=%s\nQuestion=%s\nWin=%s\n%s\nLose=%s\n%s\nMod=%s\nRating=%s' \
-        % (self.description, self.question, self.win, self.reward, self.lose, self.punish, self.mod, self.rating)
+        return 'New Encounter\nDescription=%s\nWin=%s\n%s\nLose=%s\n%s\nMod=%s\nRating=%s' \
+        % (self.description, self.win, self.reward, self.lose, self.punish, self.mod, self.rating)
 
     # Post: Will return a list of the the values of resources that was the outcome of the encounter.
     def get_outcome(self):
@@ -74,7 +72,6 @@ class Encounter:
     # Post: Uses the encounter's choice1 and choice2 instance attributes to ask a question, returning 1 for choosing
     # choice1, and 2 for choosing choice2.
     def decision(self):
-        print(self.question)
         print("Do you...")
         print("1: " + str(self.choice1))
         print("2: " + str(self.choice2))
@@ -111,27 +108,3 @@ class Encounter:
     # Post: Sets this encounter's rating value to the given value.
     def set_rating(self, rating):
         self.rating = rating
-
-d2 = Dice()
-
-description = "This is my description."
-
-question = "Which do you choose?"
-
-choice1 = "Choice1"
-choice2 = "Choice2"
-
-e = Encounter(description, question, choice1, choice2)
-e.set_mod(-3)
-e.set_rating(10)
-e.set_reward("Your investigation suceeded.",
-             [0, -d2.hidden_roll(3), 0, 0, -5, -d2.hidden_roll(3), 2 + d2.hidden_roll(3)])
-
-e.set_loss("Your investigation failed.",
-           [0, -d2.hidden_roll(3), 0, 0, -5, -d2.hidden_roll(3), 2 + d2.hidden_roll(3)])
-
-print(e)
-
-# hmm = e.get_outcome()
-
-# Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom

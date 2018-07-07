@@ -1,7 +1,7 @@
-import random
-
 # Dice can roll hidden dice or ask for player involvement and roll a dice where they can see the outcome.
 # The dice can have any number of sides anytime it is asked to be rolled.
+
+import random
 
 
 class Dice:

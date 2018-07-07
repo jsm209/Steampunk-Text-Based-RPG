@@ -20,11 +20,13 @@ class Player:
     # Post: For each resource, outputs the name of the resource and the amount of the resource.
     # One special case is reporting stress, which is meant to be ambiguous, therefore lacking a clear value.
     def get_count(self):
+        print("### RESOURCES & STATS ### ")
         for x in range(0, 7):
             if x == 4:
                 print(self.resource_names[x] + ": " + self.stress_status())
             else:
                 print(self.resource_names[x] + ": " + str(self.resources[x]))
+        print("##########################")
 
     # Post: Check the player's stress, and returns a value of type String, which is a purposely ambiguous description.
     def stress_status(self):
@@ -84,11 +86,6 @@ class Player:
         if changes[5] > 0:
             print("Also " + str(changes[5]) + " miner(s) opt to join you. You guess the life on the mining rig is boring.")
         self.add(changes)
-
-
-p1 = Player()
-p1.mine()
-p1.get_count()
 
             
 

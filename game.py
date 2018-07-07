@@ -1,4 +1,7 @@
-import time
+from dice import *
+from encounter import *
+from encounterGroup import *
+from player import *
 
 #############
 # CONSTANTS #
@@ -6,29 +9,21 @@ import time
 
 # Tracks the amount of progress the player made.
 TURN = 1
-
-# Base list of valid actions
-VALID_ACTIONS = ["walk forward", "walk backward", "examine", "inventory", "status", "mood"]
-
-# Additional actions added over time
-ADD_ACTIONS = []
-
-
 # Post: Presents an introduction
 # Give opening text
+
+
 def opening_story():
-
-
-# Gets a random entry from the list
-def random_list_entry():
+    print("Opening story.")
 
 
 # Advances the turn counter by 1
-def next_turn(self):
+def next_turn():
     global TURN
-    self.TURN += 1
+    TURN += 1
 
-def single_player_game(self, player):
+
+def single_player_game(player):
     global TURN
     while TURN <= 20:
         # "It is the start of day X. You check your resources:"
@@ -38,126 +33,116 @@ def single_player_game(self, player):
         # if it is an encounter, get a random list entry from the appropriate list of encounters depending if
         #   the player chose research or exploration
         # At the end of the turn, advance the counter by 1.
-
-
-
-
-# Pre: Given a valid integer.
-# Post: Will walk that far in the positive or negative direction as long as the total steps is greater than 0.
-def walk(num):
-    global TURN
-    if TURN + num < 1:
-        print("You quickly bump into a wall.")
-    else:
-        TURN += num
-
-
-# Pre: Given a list of possible actions, and an additional list of extra actions,
-# Post: Will collect input from the player and execute their selected action.
-def action_exploration(actions, extra=[]):
-    print("Looking around, you realize you have a number of options.")
-    time.sleep(1)
-    print("You can: ")
-    time.sleep(1)
-    for x in actions + extra:
-        print("    " + x)
-    indecisive = True
-    # check if decision is legal, and if so do that action. If not then try again.
-    while indecisive:
-        decision = input("What do you do? ").lower()
-        if decision in actions + extra:
-            output = "You "
-            if decision == "walk forward":
-                output = output + decision + "."
-                walk(1)
-            elif decision == "walk backward":
-                print("You walk backward.")
-                walk(-1)
-            elif decision == "examine":
-                print("You take a look around.")
-                global ADD_ACTIONS
-                ADD_ACTIONS = examine()
-            elif decision == "inventory":
-                # call list of items
-                print("You rummage through your bag.")
-            elif decision == "status":
-                # call player's stats and condition
-                print("You take a deep breathe.")
-            elif decision == "mood":
-                # call mood
-                print("You're feeling moody")
-            time.sleep(4)
-            indecisive = False
+        print("It is the start of day " + str(TURN) + ". You have: ")
+        p1.get_count()
+        print("How do you spend your day?")
+        choice = action_prompt()
+        if choice == 1:
+            player.mine()
+        elif choice == 2:
+            print("PLACEHOLDER, PLAYER DOCKS.")
+        elif choice == 3:
+            print("PLACEHOLDER, PLAYER WORKS.")
+        elif choice == 4:
+            encounter = research_encounters.get_random_encounter()
+            player.add(encounter.get_outcome())
         else:
-            print("I can't comprehend that.")
+            print("PLACEHOLDER, PLAYER EXPLORES.")
+        next_turn()
+
+    # After 20 turns, encounter Maw.
 
 
-# Given
-def examine():
-    global TURN
-    add_actions = []
-    if TURN == 1:
-        print("You're in a cave with a pool of water in the center of the room.")
-        print("Upon close examination, you see a wrench in the wreckage pile.")
-        add_actions = ["pick up wrench"]
-    elif TURN == 2:
-        print("You're on a cliff overlooking a valley of clouds.")
-    elif TURN == 3:
-        print("There are scattered mechanical parts and.. uh.")
-    return add_actions
+def action_prompt():
+    print("Do you...")
+    print("1: Mine")
+    print("2: Dock")
+    print("3: Work")
+    print("4: Research")
+    print("5: Explore")
+    while True:
+        choice = None
+        try:
+            choice = int(input("[ENTER ANY NUMBER 1-5: ]" ))
+        except ValueError or choice not in range(1, 6):
+            print("That isn't an option.")
+            continue
+        if choice in range(1, 6):
+            return choice
 
 
-def storyline():
-    global TURN
-    opening_story()
-    while TURN <= 10:
-        print("Your TURNS is " + str(TURN))
-        action_exploration(VALID_ACTIONS, examine())
+##############
+# ENCOUNTERS #
+##############
 
+# General Notes:
+#   Encounter() constructor parameters are in the following order:
+#   description, choice1, choice2, win message, win resources, lose message, lose resourced, mod, rating
+#   The reward must be in a list in the standard resource order: [Credits, Food, Fuel, Hull, Stress, Crew, Wisdom]
 
-# Get a method that creates encounter objects from a text file, and adds them to a list while there is still text.
-def build_encounters(file):
-    encounters = []
-    infile = file(file, "r")
-    # line = infile.readLine()
-    while infile != "" :
-        # Store basic parameters for an encounter
-        description = ""
-        encounter = ""
-        win = ""
-        lose = ""
-        mod = 0
-        rating = 10
-        if infile.readLine() == "description:":
-            while infile.readLine() != "question:":
-                description = description + infile.readLine()
-        elif infile.readLine() == "encounter":
-            while infile.readLine() != "win:":
-                encounter = encounter + infile.readLine()
-        elif infile.readLine() == "win:":
-            while infile.readLine() != "reward:":
-                win = win + infile.readLine()
-        elif infile.readLine() == "reward:":
-            # put the following seven numbers into a list.
-        elif infile.readLine() == "lose:":
-            while infile.readLine() != "punish:":
-                lose = lose + infile.readLine()
-        elif infile.readLine() == "punish:":
-            # put the following seven numbers into a list.
-        elif infile.readLine() == "mod:":
-            mod = infile.readLine()
-        elif infile.readLine() == "rating:":
-            rating = infile.readLine()
-        else:
-            raise Exception("Given file not in correct format.")
-            return null
-        # Things to test:
-            # Does reading lines of text actually store it correctly in the encounter?
-            # Does creating new lines in the text file translate correctly to encounter?
+d = Dice()
 
-        # TODO:
-            # Find a way to parse text into a list.
-            # Actually import the encounter class and build the encounter, then test it using the _repr_ command.
+# RESEARCH ENCOUNTERS:
+research_encounters = encounterGroup()
+research_encounters.add(Encounter(
+    "Your uncle, a prosperous Flux mining rig foreman used to help fund the research of Dr. Stynbeck, an alienist by\n"
+    "trade and a leading expert on research about The Maw. Both he and your uncle mysteriously disappeared 9 years\n"
+    "ago, and are believed to be dead. However neither of their bodies were found and both of their homes fell victim\n"
+    "to an unknown arsonist. One of the few heirlooms from your uncle that you inherited was a journal containing \n"
+    "broken clues about their research. One of the entries contains the whereabouts of Dr. Stynbeck's hidden library,\n"
+    "and your uncle's abandoned Flux mining rig. You can only spend the day investigating either location, but not \n"
+    "both. Which do you choose?",
+    "Dr. Stynbeck's Library",
+    "Your Uncle's Mining Rig",
+    "Your investigation proves fruitful, and you're enlightened with more knowledge about The Maw. You learn that \n"
+    "The Maw has a cult following, and it is these individuals who destroyed much of the original research. Just as \n"
+    "you realize this, you feel another presence nearby, and turn to look only to see a hooded figure quickly duck \n"
+    "out of view... You fail to locate the mysterious figure.",
+    [0, -1, 0, 0, 1*d.hidden_roll(4), -2, 2],
+    "Your investigation failed.",
+    [0, -1, 0, 0, 1*d.hidden_roll(4), -1, 0],
+    3,
+    10
+))
+
+research_encounters.add(Encounter(
+    '''
+    While traveling to your next destination, an unusual amount of fog engulfs your airship.  The color is a tinge of
+    dark green, which you find unusual compared to the smog that covers Lugmere. An eerie silence falls over you and
+    your crew, as you all stare at each other, unsure of where you're are, where you're going, and strangely, where
+    you just came from. In fact, it is hard to recall anything, even your own name, and you stare helplessly at the
+    skies, not sure about anything. Shuffling can be heard, and you soon see mite like creatures with oily bodies
+    crawl up the side of your vessel and onto the deck. You have free will, yet you don't feel inclined to warn your
+    crew mates about the creatures crawling up their legs. You can see them excreting a dark green gas, strikingly
+    similar to the clouds that surround the airship. Tens of these creatures slither across the deck, and one arrives
+    at your feet, crawling up your leg. It engulfs your head, and your thoughts are soon whisked away to another realm.
+    ''',
+    "Embrace your mind",
+    "Rip the mite off",
+    '''
+    You gain control of your thoughts, and you're filled with spatial understanding beyond this world. You can see
+    yourself, standing on the tiny airship floating among the clouds. Further out, it looks like the entirety of Lugmere
+    could fit in your palm. Your eyes peer downwards to see a massive worm-like creature, its mouth at the base of
+    the city. Beneath the mouth is a mess of swirling coils of scales, fur, and indescribable appendages. Just then,
+    you see an electrical surge flow through its body as it howls, and Lugmere lights up more ever so slightly.
+    Your vision fades as you succumb to fatigue and drowsiness...
+    You soon wake up to find yourself enlightened, and your airship untouched and safe. You're not sure if your crew
+    also experienced the same, but you note the experience and continue as if it didn't happen.
+    ''',
+    [0, 0, 0, 0, 1*d.hidden_roll(2), -2, 2],
+    '''
+    You fail to meld with the creature, and you succumb to its gas. You wake to find your airship lodged into a random
+    island, crew members are missing, and the early morning sun casting its light onto your face. Without a clue as to
+    how long you were unconscious, you continue on your way, noting this encounter with the strange mite. 
+    
+    ''',
+    [0, 0, 0, -2, 1*d.hidden_roll(4), -1*d.hidden_roll(2), 1],
+    12,
+    25
+))
+
+p1 = Player()
+single_player_game(p1)
 
 
 
