@@ -13,8 +13,8 @@ from dice import *
 class Player:
 
     def __init__(self):
-        self.resources = [0, 0, 0, 0, 100, 0, 0]
-        self.resource_names = ["Credits", "Food", "Flux", "Hull", "Stress Level", "Crew", "Wisdom"]
+        self.resources = [0, 0, 0, 10, 100, 0, 0]
+        self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
         # Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
 
     # Post: For each resource, outputs the name of the resource and the amount of the resource.
@@ -23,10 +23,10 @@ class Player:
         print("### RESOURCES & STATS ### ")
         for x in range(0, 7):
             if x == 4:
-                print(self.resource_names[x] + ": " + self.stress_status())
+                print("# " + self.resource_names[x] + ": " + self.stress_status())
             else:
-                print(self.resource_names[x] + ": " + str(self.resources[x]))
-        print("##########################")
+                print("# " + self.resource_names[x] + ": " + str(self.resources[x]))
+        print("#########################")
 
     # Post: Check the player's stress, and returns a value of type String, which is a purposely ambiguous description.
     def stress_status(self):
@@ -47,45 +47,80 @@ class Player:
         if len(other) == 7:
             for x in range(0, 7):
                 self.resources[x] += other[x]
+                if other[x] > 0:
+                    print("You gain " + str(other[x]) + " " + self.resource_names[x] + ".")
+                elif other[x] < 0:
+                    print("You lose " + str(other[x]) + " " + self.resource_names[x] + ".")
 
+    # Pre: Given a dice object in order to roll different sided dice,
     # Post: Presents dialogue to the player, where depending on a dice roll, determines the possible reward from
     # mining. A minimum of 4 Flux and 1 Crew will always be rewarded, with additional rewards depending on dice rolls.
-    def mine(self):
-        print("You take your airship towards the base of the closest isle.")
-        print("The glimmering shine of the Flux stones can be seen through the roots\n"
-              "that once held the landmass to the ground.")
-        print("Taking your ship closer, you dock at the mining station and attempt to convince \n"
-              "the mining crew foreman for permission to harvest Flux. He is a scruffy looking fellow,\n"
-              "well built, and wears a sharp look on his face. Maybe you can convince him \n"
-              "to lend you some of his workers as well.")
-        d = Dice()
+    def mine(self, d):
+        print('''
+        You take your airship towards the base of the closest isle. The glimmering shine of the Flux stones can be seen 
+        through the roots that once held the landmass to the ground. Taking your ship closer, you dock at the mining 
+        station and attempt to convince the mining crew foreman for permission to harvest Flux. He is a scruffy looking 
+        fellow, well built, and wears a sharp look on his face. Maybe you can convince him to lend you some of his 
+        workers as well.
+        ''')
+
         check = d.roll(20)
         bonus = 0
         if check >= 15:
-            print("'Ho there young lad! Looking to get flush? I admire your courage \n"
-                  "to off The Maw, so I'll help you mine this here Flux on the fly!'")
+            print('''
+            \"Ho there young lad! Looking to get flush? I admire your courage to help Lugmere, so I'll help you mine 
+            this here Flux on the fly!\"
+            ''')
             bonus += 2
         elif check >= 10:
-            print("'Hmm lad, think you can in this day take Flux? There ain't a heap of it \n"
-                  "left in Zernear, but I'll let ya have what I can give if it means ending The Maw.'")
+            print('''
+            \"Hmm lad, think you can in this day take Flux? There ain't a heap of it left on this isle, but I'll let ya 
+            have what I can give if it means ending The Maw.\"
+            ''')
             bonus += 1
         elif check >= 5:
-            print("You scavengers are like Monkrats! Never ending supply of you lads I tell ya!\n"
-                  "Flux is precious these days, take what you must but I tell ya it's scarce...'")
+            print('''
+            \"You scavengers are like Monkrats! Never ending supply of you lads I tell ya! Flux is precious these days, 
+            take what you must but I tell ya it's scarce...\"
+            ''')
         else:
-            print("'Hobble yer lip! You've got the hykey to ask for MY flux on MY mining rig?\n"
-                  "I think ya got a screw loose. Good luck trying to get my workers to help.'")
+            print('''
+            \"Hobble yer lip! You've got the hykey to ask for MY flux on MY mining rig? I think ya got a screw loose. 
+            Good luck trying to get my workers to help.\"
+            ''')
             bonus -= 1
         print("You end up convincing the foreman to let you use his mine.")
         changes = [0, -d.hidden_roll(10), (4+bonus), 0, 0, (1+bonus), 0]
-        print("The day is spent mining flux. The foreman's miners stare at you as you work, their curious\n"
-              "gaze makes you feel slightly nervous. You can hear them whisper about you and The Maw. It seems\n"
-              "that word must travel quickly on this mining rig.")
-        print("You consume " + str(changes[1] * -1) + " food.")
-        print("You end up mining " + str(changes[2]) + " Flux.")
+        print('''
+        The day is spent mining flux. The foreman's miners stare at you as you work, their curious gaze makes you feel 
+        slightly nervous. You can hear them whisper about you and The Maw. It seems that word must travel quickly on 
+        this mining rig.
+        ''')
         if changes[5] > 0:
-            print("Also " + str(changes[5]) + " miner(s) opt to join you. You guess the life on the mining rig is boring.")
+            print("Also " + str(changes[5]) + " miner(s) opt to join you. You guess the life on the mining rig is "
+                                              "boring.")
         self.add(changes)
+
+    # Pre: Given a dice object in order to roll different sided dice,
+    # Post: Presents dialogue to the player and gives the player resources depending on the outcome of dice rolls.
+    def dock(self, d):
+        print('''
+        You dock your airship to a nearby traveler isle. There are several other airships also docked
+        here, with a large amount of mysterious figures bustling about on the platforms that line the
+        facility. You take in the shanties of the pub and turn a blind eye to the prostitution
+        and drug dealings in order to take advantage of their services for yourself.
+        ''')
+        self.add([-100, d.hidden_roll(5), d.hidden_roll(5), d.hidden_roll(3), 2*d.hidden_roll(10),
+                  2*d.hidden_roll(3), 0])
+
+    # Pre: Given a dice object in order to roll different sided dice,
+    # Post: Presents dialogue to the player and gives the player resources depending on the outcome of dice rolls.
+    def work(self, d):
+        print('''
+        You work a random odd job.
+        ''')
+        self.add([250 + 20*d.hidden_roll(10), 0, 0, 0, 0, 0, 0])
+
 
             
 

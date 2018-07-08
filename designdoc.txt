@@ -43,6 +43,17 @@ Greatly increases stress, depletes food, costs credits, but has high risk high r
 
 Mine reliably gives fuel, depletes food, and gains crew because miners hate their jobs.
 
+You can't explore or do research without at least a crew of 1, and 1 fuel.
+
+General Scaling
+Credits is base 100
+Food is base 1
+Fuel is base 1
+Hull is base 1, max of 10
+Stress is base 10, max of 100
+Crew is base 1
+Wisdom is base 1
+
 ##########################
 #MECHANICS/IMPLEMENTATION#
 ##########################
