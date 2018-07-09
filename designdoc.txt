@@ -54,6 +54,9 @@ Stress is base 10, max of 100
 Crew is base 1
 Wisdom is base 1
 
+The reward must be in a list in the standard resource order:
+[Credits, Food, Fuel, Hull, Stress, Crew, Wisdom]
+
 ##########################
 #MECHANICS/IMPLEMENTATION#
 ##########################

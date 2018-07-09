@@ -3,6 +3,18 @@ from encounter import *
 from encounterGroup import *
 from player import *
 
+# A "game" organizes the necessary processes to play a game of Lugmere's Loss. It can process turns, and increment the
+# total amount of turns.
+
+#############
+# CONSTANTS #
+#############
+MAX_TURNS = 20
+
+
+##################
+# INITIALIZATION #
+##################
 TURN = 1  # Tracks the amount of progress the player made.
 d = Dice()  # A dice to share with all the game mechanics.
 
@@ -17,12 +29,13 @@ def next_turn():
     global TURN
     TURN += 1
 
+
 # Pre: Given a player object,
 # Post: Will carry out all the processes necessary for a single player game of Lugmere's Loss. It presents the initial
 # story, and processes 20 turns before presenting a final encounter.
 def single_player_game(player):
     global TURN
-    while TURN <= 20:
+    while TURN <= MAX_TURNS:
         # "It is the start of day X. You check your resources:"
         # call player's status method.
         # ask the player what action they want to perform.
@@ -78,10 +91,14 @@ def process_turn(player):
         player.resources[5] -= 1
         encounter = research_encounters.get_random_encounter()
         player.add(encounter.get_outcome())
-    elif choice == 5:
-        print("PLACEHOLDER, PLAYER EXPLORES.")
+    elif choice == 5 and player.resources[5] > 0 and player.resources[2] > 0:
+        player.resources[2] -= 1
+        player.resources[5] -= 1
+        encounter = exploration_encounters.get_random_encounter()
+        player.add(encounter.get_outcome())
     else:
         print("You don't have the resources to do that. Please select another course of action.")
+        print("You figure exploration and research both need at least one crew member and one Flux stone.")
         process_turn(player)
 
 ##############
@@ -192,7 +209,111 @@ research_encounters.add(Encounter(
     13
 ))
 
+# EXPLORATION ENCOUNTERS:
+exploration_encounters = encounterGroup()
+exploration_encounters.add(Encounter(
+    '''
+    While on your way to another destination, you pass by a mountainous floating island. This one is peculiar however, 
+    because unlike other islands, this one lacks the typical white glow from Flux stones found at the base. Upon closer 
+    investigation, you spot all the Flux stones removed and placed at the center of the island, sitting in a lone pile. 
+    You find this strange because these stones are very valuable, yet they're just laying there. It is actually against 
+    Lugmere law to possess that many stones, in order to limit one's total raw power output. Near the pile sits a hooded 
+    figure, who appears to be badly wounded. The injured person notices your airship and yells out for help! On one hand 
+    you can kill them and take the Flux stones for yourself, as any witnesses would report you to the law. 
+    On the other hand, you can help the figure, and hope they reward you with a share of Flux stones.
+    ''',
+    "Attempt to kill the injured person and steal the Flux stones.",
+    "Attempt to help the injured person and hope for a reward.",
+    '''
+    As you land on the island and offload your crew, the hooded figure shakes off the red liquid you mistook for blood. 
+    Your heart sinks at the sight of him revealing a horn from his robe. He blows on it loudly and suddenly from behind 
+    the nearby mountains, several pirate airships appear and circle above! Realizing your mistake, you rush to grab as
+    many Flux stones as you can, and leave on your airship. The pirates have trouble losing altitude to catch you before
+    you're off on your way.
+    ''',
+    [0, 0, 30, 0, -5, -1, 0],
+    '''
+    As you land on the island and offload your crew, the hooded figure shakes off the red liquid you mistook for blood. 
+    Your heart sinks at the sight of him revealing a horn from his robe. He blows on it loudly and suddenly from behind 
+    the nearby mountains, several pirate airships appear and circle above! Realizing your mistake, you rush to grab as
+    many Flux stones as you can, but the pirates descend on you. \"This isn't worth it.\" you tell yourself, as you drop
+    the Flux stones and quickly escape.
+    ''',
+    [0, 0, d.hidden_roll(3), 0, -10, -1*d.hidden_roll(4), 0],
+    3,
+    19
+))
 
+exploration_encounters.add(Encounter(
+    '''
+    You realize that with more credits you could accomplish so much more. Realizing the gravity of Lugere's dilemma,
+    you figure you can mount a pretty reasonable persuasive argument. You decide to approach the baron of a nearby
+    fief on the outskirts of Lugmere for funding, as the central government only supports military personnel. As fly
+    past downtrodden islands filled with poor villagers and farmland, you realize that this particular baron does not
+    treat his subjects kindly, and must be taxing them for more than the allotted amount. You reason that being closer
+    to the outskirts allows for more leniency with the law. Drifting closer to the baron's reasonably elegant chateau 
+    prompts you to rethink your intentions. Should you still seek funding from the Baron, or should you spread your 
+    wealth to the people?
+    ''',
+    "Seek help from the Baron.",
+    "Give help to the poor.",
+    '''
+    You approach the Baron, and enter his hall. His slick skin and lofty demeanor is jarring in comparison to the poor
+    local populance. You explain the news about The Maw's impending escape, and he is instantly shocked awake by the
+    possibility of losing everything he owns. He sacrifices some of his greed to preserve his majority, and grants you
+    credits. However, during the moment you reach out to accept it, you feel the disapproving gaze of your
+    crew members. Your crew mates frown at your morality, as you're supposed to be saving Lugmere, not stealing from
+    it, and some are disgusted enough to leave your cause!
+    ''',
+    [1000, 0, 0, 0, 0, -2*d.hidden_roll(3)+d.hidden_roll(3), 0],
+    '''
+    You have a change of heart and instead approach several of the downtrodden islands. On each island, you give 50
+    credits, which for them should allow them to live comfortably until The Maw is dealt with. It also isn't a high
+    enough amount to alert the baron, not that he would care about such a measly amount anyways. Your generosity is
+    rewarded when several villagers are persuaded to join your cause! 
+    ''',
+    [-50*d.hidden_roll(4), 0, 0, 0, 0, 2*d.hidden_roll(3), 0],
+    21,
+    21
+))
+
+exploration_encounters.add(Encounter(
+    '''
+    As you drift through the skies, a giant swirling vortex suddenly opens up and a rift tears in the sky. The rift lets
+    loose several small, dog sized fleshy bodies, armed with two legs and a sharp tail. Prior research helps you tell
+    they're riftlings, which are otherworldy creatures from R'lyeh. You attempt to turn the airship around, but the 
+    winds are not in your favor, and your engine fails to overcome the strength of the storm. Meanwhile, several
+    riftlings fling themselves onto the deck of your airship and begin to cause panic. What should you do? 
+    ''',
+    "Steer the airship away from colliding with the vortex.",
+    "Fight the riftlings on board.",
+    '''
+    From your flight cabin, you can hear horrible screams from the deck. You work to steer the airship away from the
+    vortex, and manage to use the vortex to slingshot your craft out danger. As you leave, the vortex shrinks in size
+    and the rift closes. A deafening silence falls over your ears as your crew stops screaming in pain, and you leave
+    your flight cabin to investigate. You walk out to a horrible scene of carnage, with bits of riftlings dissolving
+    into the air, and torn up crew members that line the railings. Several body parts are without owners, and you can
+    hear the pleading of dying crew members as they crawl towards their captain, hoping you can save them. You put the
+    dying crew members out of their misery, as their gashes are too large to heal. You turn to the side and see several 
+    unscathed crew members paralyzed from shock and cowering in the corner. The threat is gone but the damage has been 
+    dealt... 
+    ''',
+    [0, 0, 0, -1, -20, -2*d.hidden_roll(3)*d.hidden_roll(3), 2],
+    '''
+    You join your crew on deck to fight the riftlings. The background of the looming vortex frightens you, but your
+    crew's morale instantly improves when they see you pull out your flintlock pistol and begin firing at the enemies.
+    Your leadership and inspiration invokes vigor in your crew as you push back the riftlings. The creatures fling
+    themselves about, using a pack mentality to attach and prey on individual crew members. Your teamwork 
+    quickly cuts down their numbers. Unfortunately, the fight was the least of your concerns as your ship plunges into
+    the vortex. You quickly usher your crew into the deepest cabins and you sit in fear and wait. You wait for what
+    seems like an eternity. Suddenly, the storm yields, and a deafening silence falls over you and your crew. You 
+    stumble outside only to find your airship wrecked immensely, and all that remains of the main deck are a few 
+    floorboards and broken railings. 
+    ''',
+    [0, 0, 0, -2*d.hidden_roll(3), -20, -1, 2],
+    21,
+    21
+))
 # Starts a game of Lugmere's Loss.
 p1 = Player()
 single_player_game(p1)

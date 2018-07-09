@@ -13,7 +13,11 @@ from dice import *
 class Player:
 
     def __init__(self):
-        self.resources = [0, 0, 0, 10, 100, 0, 0]
+
+        self.MAX_HULL = 10
+        self.MAX_SANITY = 100
+
+        self.resources = [300, 0, 0, 10, 100, 0, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
         # Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
 
@@ -42,15 +46,27 @@ class Player:
             return "Nervous"
 
     # Pre: Given a list containing exactly 7 values, where each index matches the index of the particular resource,
-    # Post: Adds the resources, returning the resulting sum as a list.
+    # Post: Adds the resources, returning the resulting sum as a list. Also prints the amount of each resource gained
+    # or lost, and alerts the player if they've exceeded any maximums.
     def add(self, other):
         if len(other) == 7:
             for x in range(0, 7):
                 self.resources[x] += other[x]
                 if other[x] > 0:
                     print("You gain " + str(other[x]) + " " + self.resource_names[x] + ".")
+                    if x is 3 and self.resources[x] > self.MAX_HULL:
+                        print("However, you forfeit " + str(self.resources[x] - self.MAX_HULL) + " "
+                              + self.resource_names[x] + " because you reached the maximum of " + str(self.MAX_HULL))
+                        self.resources[x] = self.MAX_HULL
+                    elif x is 4 and self.resources[x] > self.MAX_SANITY:
+                        print("However, you forfeit " + str(self.resources[x] - self.MAX_SANITY) + " "
+                              + self.resource_names[x] + " because you reached the maximum of " + str(self.MAX_SANITY))
+                        self.resources[x] = self.MAX_SANITY
                 elif other[x] < 0:
-                    print("You lose " + str(other[x]) + " " + self.resource_names[x] + ".")
+                    if (other[x] + self.resources[x]) <= 0:
+                        print("You lose all of your " + self.resource_names[x] + ".")
+                    else:
+                        print("You lose " + str(other[x]) + " " + self.resource_names[x] + ".")
 
     # Pre: Given a dice object in order to roll different sided dice,
     # Post: Presents dialogue to the player, where depending on a dice roll, determines the possible reward from
