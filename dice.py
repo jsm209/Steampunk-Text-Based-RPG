@@ -9,7 +9,7 @@ class Dice:
     # Pre: Given a value "sides" of type integer,
     # Post: Will ask for the player to push enter, roll a dice with the given sides, and return the result as an int.
     def roll(self, sides):
-        input("[PRESS ENTER TO ROLL]")
+        input("[PRESS ENTER TO ROLL] ")
         roll = random.randint(1, sides)
         if roll == 1 and sides == 20:
             print ("**You rolled a " + str(roll) + ". Say your prayers.**")

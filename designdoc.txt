@@ -56,6 +56,7 @@ Wisdom is base 1
 
 The reward must be in a list in the standard resource order:
 [Credits, Food, Fuel, Hull, Stress, Crew, Wisdom]
+[0, 0, 0, 0, 0, 0, 0]
 
 ##########################
 #MECHANICS/IMPLEMENTATION#
@@ -137,3 +138,45 @@ another twenty days before The Maw escapes Zernear's hold. A call has been made 
 help find a solution, or band together to take down the beast.
 
 Determined to be like the heroine of old, you set out in your airship and begin your journey.
+
+
+# Details necessary to include in introduction:
+    The Mawful Cult
+    Lugmere's government and the dilemma faced by the district if The Maw died or escaped. (Energy problems, Flux is
+    limited)
+    The value of Flux.
+    The Outerworld and R'yleh.
+
+
+
+############################
+# FINAL ENCOUNTER PLANNING #
+############################
+You can engage The Maw threat in two paths:
+    With crew
+    With wisdom
+
+Both paths will ask a series of three encounters, with varying choices subtracting some amount of crew/wisdom depending
+on if the player made a logical and lore friendly move. More lore friendly, less loss.
+
+Sanity will deplete with resource loss, however if sanity is completely loss, the game is lost. If the player can't
+sacrifice any more of a given resource, they go to a "losing scenario"
+
+A losing scenario is basically a last ditch effort that the player has to roll successfully three times. If they do
+they win the game. If not they lose.
+
+Lore Friendly:
+    The Maw is immune to Flux.
+    The Maw is immune to poison.
+    The Maw will only eat men.
+    The Maw requires a sacrifice of 30.
+    The claw prison requires 30 flux to reinforce itself.
+    The Mawful cult is attempting to free The Maw, and will lie to do so.
+    The Maw holds a portal in its mouth to the otherworld.
+    The Maw actually means no harm if released, and will slither back through a rift down below.
+    Lugmere's government strongly opposes releasing or killing The Maw, and wish to keep it captive.
+    The Maw's main weakness is lava, as it is hot enough to ignite the oil on its skin.
+    Flux and The Maw's energy are the same. Feeding The Maw Flux gives Lugmere a power surge.
+    The Maw powers Lugmere with Flux.
+
+

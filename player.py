@@ -64,7 +64,8 @@ class Player:
                         self.resources[x] = self.MAX_SANITY
                 elif other[x] < 0:
                     if (other[x] + self.resources[x]) <= 0:
-                        print("You lose all of your " + self.resource_names[x] + ".")
+                        print("You have no more " + self.resource_names[x] + " to lose.")
+                        self.resources[x] = 0
                     else:
                         print("You lose " + str(other[x]) + " " + self.resource_names[x] + ".")
 
@@ -106,7 +107,7 @@ class Player:
             ''')
             bonus -= 1
         print("You end up convincing the foreman to let you use his mine.")
-        changes = [0, -d.hidden_roll(10), (4+bonus), 0, 0, (1+bonus), 0]
+        changes = [0, -d.hidden_roll(6), (4+bonus), 0, 0, (1+bonus), 0]
         print('''
         The day is spent mining flux. The foreman's miners stare at you as you work, their curious gaze makes you feel 
         slightly nervous. You can hear them whisper about you and The Maw. It seems that word must travel quickly on 
@@ -126,8 +127,8 @@ class Player:
         facility. You take in the shanties of the pub and turn a blind eye to the prostitution
         and drug dealings in order to take advantage of their services for yourself.
         ''')
-        self.add([-100, d.hidden_roll(5), d.hidden_roll(5), d.hidden_roll(3), 2*d.hidden_roll(10),
-                  2*d.hidden_roll(3), 0])
+        self.add([-100, self.resources[5] + d.hidden_roll(4), 0, d.hidden_roll(4), 2*d.hidden_roll(10),
+                  d.hidden_roll(4), 0])
 
     # Pre: Given a dice object in order to roll different sided dice,
     # Post: Presents dialogue to the player and gives the player resources depending on the outcome of dice rolls.
@@ -136,6 +137,13 @@ class Player:
         You work a random odd job.
         ''')
         self.add([250 + 20*d.hidden_roll(10), 0, 0, 0, 0, 0, 0])
+
+    # Post: Will update the player's resources
+    def update(self):
+        if self.resources[1] <= 0:
+            print("You are starving.")
+            self.add([0, 0, 0, 0, -5, -1, 0])
+
 
 
             
