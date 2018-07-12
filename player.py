@@ -17,9 +17,14 @@ class Player:
         self.MAX_HULL = 10
         self.MAX_SANITY = 100
 
-        self.resources = [300, 0, 0, 10, 100, 0, 0]
+        self.resources = [300, 15, 1, 10, 100, 1, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
+        self.name = input("What is your name? ")
         # Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
+
+    # Post: Returns the player's name as a String.
+    def get_name(self):
+        return self.name
 
     # Post: For each resource, outputs the name of the resource and the amount of the resource.
     # One special case is reporting stress, which is meant to be ambiguous, therefore lacking a clear value.
@@ -127,8 +132,8 @@ class Player:
         facility. You take in the shanties of the pub and turn a blind eye to the prostitution
         and drug dealings in order to take advantage of their services for yourself.
         ''')
-        self.add([-100, self.resources[5] + d.hidden_roll(4), 0, d.hidden_roll(4), 2*d.hidden_roll(10),
-                  d.hidden_roll(4), 0])
+        self.add([-10*(self.resources[5]+1), self.resources[5]*d.hidden_roll(2), 0, d.hidden_roll(4),
+                  2*d.hidden_roll(10), d.hidden_roll(4), 0])
 
     # Pre: Given a dice object in order to roll different sided dice,
     # Post: Presents dialogue to the player and gives the player resources depending on the outcome of dice rolls.
@@ -140,9 +145,13 @@ class Player:
 
     # Post: Will update the player's resources
     def update(self):
-        if self.resources[1] <= 0:
-            print("You are starving.")
-            self.add([0, 0, 0, 0, -5, -1, 0])
+        hunger = self.resources[5]+1
+        if self.resources[1] - hunger < 0:
+            print("You are starving. Some crew members perish and it worries you.")
+            self.add([0, 0, 0, 0, self.resources[1] - hunger, self.resources[1] - hunger, 0])
+        else:
+            print("You feed your party " + str(hunger) + " " + self.resource_names[1] + ".")
+            self.add([0, -hunger, 0, 0, 0, 0, 0])
 
 
 

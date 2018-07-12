@@ -166,7 +166,7 @@ A losing scenario is basically a last ditch effort that the player has to roll s
 they win the game. If not they lose.
 
 Lore Friendly:
-    The Maw is immune to Flux.
+    The Maw is immune to Flux, and will actually become empowered by it if not a strong amount is used.
     The Maw is immune to poison.
     The Maw will only eat men.
     The Maw requires a sacrifice of 30.
@@ -179,4 +179,24 @@ Lore Friendly:
     Flux and The Maw's energy are the same. Feeding The Maw Flux gives Lugmere a power surge.
     The Maw powers Lugmere with Flux.
 
+Hmm. Rethinking this:
+There is a starting scenario, that branches into two, and each of those branch into two. This results in 4 outcomes.
+    (Crew encounter)
+        The Maw is killed
+            30 or more flux OR 30 or more crew members.
+        The Claw is repaired
+            30 or more flux OR 10 hull and 10 flux.
+    (Wisdom encounter)
+        The Maw is subdued
+            crew * wisdom > the maw OR 30 crew sacrificed.
+        The player succumbs to the Maw, eternally fighting it internally.
+            wisdom < the maw OR player fails at any point in wisdom encounter.
 
+I want the player to make three choices, so one choice will be how to deal with The Mawful Cult, another will be to
+choose between a crew or wisdom encounter, and the last is to choose the course of action.
+
+At any point, the player will lose and can only lose due to a lack of sanity. The player will make choices to travel
+the branches, losing varying amounts of sanity based on their current resources.
+At the end, in the final enounter with The Maw, her power is at a set amount * the flux it will steal from the player.
+If the player has 30 or more, the maw is killed. Otherwise, the maw gets a score, and the player's score is
+wisdom * crew.

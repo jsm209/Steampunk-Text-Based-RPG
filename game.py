@@ -8,7 +8,7 @@ from player import *
 #############
 # CONSTANTS #
 #############
-MAX_TURNS = 20
+MAX_TURNS = 13
 
 d = Dice()  # A dice to share with all the game mechanics.
 
@@ -27,29 +27,32 @@ def next_turn():
 # Pre: Given a player object,
 # Post: Will carry out all the processes necessary for a single player game of Lugmere's Loss. It presents the initial
 # story, and processes 20 turns before presenting a final encounter.
-def single_player_game(player, turn, max_turns):
-    if turn <= max_turns and has_lost(player) == False:
-        # "It is the start of day X. You check your resources:"
-        # call player's status method.
-        # ask the player what action they want to perform.
-        # if it is not an encounter, call the player's mine, work, dock method.
-        # if it is an encounter, get a random list entry from the appropriate list of encounters depending if
-        #   the player chose research or exploration
-        # At the end of the turn, advance the counter by 1.
+def player_turn(player, turn, max_turns):
+    if turn <= max_turns and has_lost(player) is False:
         print()
-        print("-"*50)
-        print("It is the start of day " + str(turn) + ". You have: ")
-        print()
-        p1.get_count()
-        print()
-        print("How do you spend your day?")
-
+        print("-" * 50)
+        print("It is the start of day " + str(turn) + " of " + str(max_turns) + ".")
         process_turn(player)
         player.update()
-        single_player_game(player, turn+1, max_turns)
     else:
         print("Maw Encounter")
         # After MAX_TURNS, encounter The Maw.
+
+
+# Pre: Given a list of players,
+# Post: Will carry out single player games for each of the players.
+def game_handler(players, turn, max_turns):
+    while turn <= max_turns:
+        print("-" * 50)
+        print("It is the start of day " + str(turn) + " of " + str(max_turns) + ".")
+        print("-" * 50)
+        for player in players:
+            if has_lost(player) is False:
+                process_turn(player)
+                player.update()
+        turn += 1
+    print("Maw Encounter")
+    # After MAX_TURNS, encounter The Maw.
 
 
 # Post: Presents the user with 5 courses of action, and returns a valid integer 1-5 that represents the chosen action.
@@ -76,6 +79,14 @@ def action_prompt():
 # assuming the player has the resources to do so. If the action was not able to be performed (due to a lack of
 # resources) it asks the player again for a different decision.
 def process_turn(player):
+    print()
+    print("-" * 50)
+    print(player.get_name() + ", you have: ")
+    print("-" * 50)
+    print()
+    player.get_count()
+    print()
+    print("How do you spend your day?")
     choice = action_prompt()
     if choice == 1:
         player.mine(d)
@@ -243,9 +254,10 @@ research_encounters.add(Encounter(
     Flux bomb to the piece of skin, arm it, and lob it off your airship to the ground below. It lands with a thud. Then
     silence. Suddenly, a giant explosion goes off and you see a huge crater. You move down to investigate. Walking over
     flames and burnt dirt, you come to a shocking sight; the skin sample was charred, but beyond that it was completely
-    unharmed. It no doubt altered the skin, but not in any damaging way. Perhaps The Maw is immune to Flux? That would
-    explain how it is able to pump the entirety of Lugmere with a similar source of energy, but surely that energy and
-    Flux can't be the same thing..?
+    unharmed. It no doubt altered the skin, but not in any damaging way. In fact, it seems to pulse with some sort of
+    energy now, but looks like it will decay eventually. Perhaps The Maw is immune to Flux? That would explain how it 
+    is able to pump the entirety of Lugmere with a similar source of energy, but surely that energy and Flux can't be 
+    the same thing..?
     ''',
     [0, 0, 0, 0, -2*d.hidden_roll(6), 0, 2],
     '''
@@ -261,6 +273,42 @@ research_encounters.add(Encounter(
     [0, 0, 0, 0, -2 * d.hidden_roll(6), 0, 2],
     21,
     21
+))
+
+research_encounters.add(Encounter(
+    '''
+    While drifting through the clear night skies of Lugmere, you lay sleeping in your cabin. Your exhausted body quickly
+    slips into a dream where you're standing on the viewing deck for the claw that clamps down on The Maw. You move
+    closer to where the claw clamps on The Maw's body, and notice several hairs flowing around, as if The Maw herself
+    was submerged in water. Several pieces of debris and spare copper parts float past you as you realize that
+    everything lacks gravity. You float slowly towards The Maw and notice that her hairs are actually small suction
+    cups held to her body by strings of flesh. The cups appear to be a perfect fit for a human head and you feel a 
+    strong urge to meld with The Maw. She notices your presence and positions two strands of her hair towards you, each 
+    with a different suction cup. One is lined with sharp teeth, and is pooling in blood, which oozes out between the
+    teeth. The other looks like a flower, with a nectar filling in the center. Which do you insert your head into?
+    ''',
+    "Trust the sharp teeth and enter the blood.",
+    "Trust the flower and enter the nectar.",
+    '''
+    You insert your head into the suction cup, and it wraps around your neck. You're fully submerged in the liquid and
+    can't breathe! You trust her and begin drinking what was in the cup rapidly, trying to get air. Your mind begins 
+    slipping. You can feel The Maw inside of you, in your thoughts and heart. It invades you and fills you with the 
+    deepest truths about the universe, about R'yleh and the otherworld, and what lies above and below Lugmere. You're 
+    overwhelmed and quickly snap awake in your cabin on your airship. You can still taste the liquid in your mouth.
+    ''',
+    [0, 0, 0, 0, -d.hidden_roll(6), 0, 3],
+    '''
+    You insert your head into the suction cup, and it wraps around your neck. You're fully submerged in the liquid and
+    can't breathe! You panic and try to get the suction cup off but it's too late- she has you. You deliver several
+    blows to the suction cup, and your head can feel the impact of each of your punches. The Maw swiftly rips your
+    neck in half, separating your head from your body. You feel an indescribable pain, which shocks you awake. You sit
+    up in your cot, and quickly grasp your neck, relieved to find it still intact. Although it was a dream, it felt
+    too close to reality. You have a suspicion that perhaps you should have trusted The Maw instead...
+
+    ''',
+    [0, 0, 0, 0, -2*d.hidden_roll(6), 0, 1],
+    0,
+    14
 ))
 
 # EXPLORATION ENCOUNTERS:
@@ -444,9 +492,34 @@ exploration_encounters.add(Encounter(
     10
 ))
 
+
+def encounter_maw(player):
+    print('''
+        This is it
+    ''')
+
+
+# Pre: Given a list of strings that represent a choice the player can make,
+# Post: Returns an integer representing the choice the player picked.
+def pick_choice(choices):
+    for x in choices:
+        print(str(choices.index(x)+1) + ": " + x)
+    while True:
+        decision = None
+        try:
+            decision = int(input("ENTER 1-" + str(len(choices)) + ": "))
+        except ValueError or decision not in range(1, len(choices)+1):
+            print("That isn't an option.")
+            continue
+        if decision in range(1, len(choices)+1):
+            return decision
+
+
 # Starts a game of Lugmere's Loss.
 p1 = Player()
-single_player_game(p1, 1, MAX_TURNS)
+p2 = Player()
+players = [p1, p2]
+game_handler(players, 1, MAX_TURNS)
 
 
 

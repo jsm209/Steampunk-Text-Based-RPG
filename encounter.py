@@ -78,7 +78,7 @@ class Encounter:
         while True:
             choice = None
             try:
-                choice = int(input("[ENTER 1 OR 2: ]"))
+                choice = int(input("ENTER 1 OR 2: "))
             except ValueError or choice not in range(1, 3):
                 print("That isn't an option.")
                 continue
