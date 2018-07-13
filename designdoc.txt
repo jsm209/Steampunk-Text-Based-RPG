@@ -141,11 +141,16 @@ Determined to be like the heroine of old, you set out in your airship and begin 
 
 
 # Details necessary to include in introduction:
-    The Mawful Cult
+    The Mawful Cult, and their insignia, which is a headless body.
+    The undercity, where the Mawful Cult resides.
     Lugmere's government and the dilemma faced by the district if The Maw died or escaped. (Energy problems, Flux is
     limited)
-    The value of Flux.
+    The value of Flux, how it's a non renewable resource, and how powerfully destructive it is.
     The Outerworld and R'yleh.
+    The mistreatement of Lugmere against The Maw
+    The floating prison
+    The sheer size of The Maw
+    The position of Lugmere, and relative size to The Maw
 
 
 
@@ -200,3 +205,15 @@ the branches, losing varying amounts of sanity based on their current resources.
 At the end, in the final enounter with The Maw, her power is at a set amount * the flux it will steal from the player.
 If the player has 30 or more, the maw is killed. Otherwise, the maw gets a score, and the player's score is
 wisdom * crew.
+
+If any of the options fail, the player's sanity drops to zero from shock, and they go to last hope encounter.
+
+Use a bomb - Succeeds with 30 Flux or more.
+Overload the clamp - Succeeds with 30 Flux or more, OR 20 crew and 20 Flux.
+Organize an assault - Automatic failure
+X Mind meld and overtake her - Succeeds with 20 wisdom.
+
+X Fortify the clamp - Succeeds with 30 Flux or more, OR 20 crew and 20 Flux.
+Make a worthy sacrifice - Succeeds with 30 crew.
+Group mind meld - Succeeds with 20 crew AND 10 wisdom.
+Release The Maw - Automatic failure.

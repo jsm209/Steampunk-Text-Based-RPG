@@ -17,7 +17,7 @@ class Player:
         self.MAX_HULL = 10
         self.MAX_SANITY = 100
 
-        self.resources = [300, 15, 1, 10, 100, 1, 0]
+        self.resources = [300, 15, 1, 10, 0, 1, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
         self.name = input("What is your name? ")
         # Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
@@ -132,7 +132,7 @@ class Player:
         facility. You take in the shanties of the pub and turn a blind eye to the prostitution
         and drug dealings in order to take advantage of their services for yourself.
         ''')
-        self.add([-10*(self.resources[5]+1), self.resources[5]*d.hidden_roll(2), 0, d.hidden_roll(4),
+        self.add([-10*(self.resources[5]+1), d.hidden_roll(6) + self.resources[5]*d.hidden_roll(2), 0, d.hidden_roll(4),
                   2*d.hidden_roll(10), d.hidden_roll(4), 0])
 
     # Pre: Given a dice object in order to roll different sided dice,
@@ -141,14 +141,14 @@ class Player:
         print('''
         You work a random odd job.
         ''')
-        self.add([250 + 20*d.hidden_roll(10), 0, 0, 0, 0, 0, 0])
+        self.add([d.hidden_roll(10) + d.hidden_roll(14) * self.resources[5], 0, 0, 0, 0, 0, 0])
 
     # Post: Will update the player's resources
     def update(self):
         hunger = self.resources[5]+1
         if self.resources[1] - hunger < 0:
             print("You are starving. Some crew members perish and it worries you.")
-            self.add([0, 0, 0, 0, self.resources[1] - hunger, self.resources[1] - hunger, 0])
+            self.add([0, 0, 0, 0, 5*(self.resources[1] - hunger), -hunger, 0])
         else:
             print("You feed your party " + str(hunger) + " " + self.resource_names[1] + ".")
             self.add([0, -hunger, 0, 0, 0, 0, 0])

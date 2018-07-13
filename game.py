@@ -50,8 +50,14 @@ def game_handler(players, turn, max_turns):
             if has_lost(player) is False:
                 process_turn(player)
                 player.update()
+            else:
+                loss_by_sanity()
+                print(player.get_name() + " has gone insane.")
+                players.remove(player)
         turn += 1
-    print("Maw Encounter")
+    for player in players:
+        # print("Maw Encounter")
+        print(player.get_name() + "'s SCORE IS: " + str(calculate_score(player)))
     # After MAX_TURNS, encounter The Maw.
 
 
@@ -59,10 +65,10 @@ def game_handler(players, turn, max_turns):
 def action_prompt():
     print("Do you...")
     print("1: Mine")
-    print("2: Dock")
+    print("2: Dock [Requires 10 credits per crew member, including yourself]")
     print("3: Work")
-    print("4: Research")
-    print("5: Explore")
+    print("4: Research [Minimum 1 Flux and 1 Crew]")
+    print("5: Explore [Minimum 1 Flux and 1 Crew]")
     while True:
         choice = None
         try:
@@ -90,7 +96,7 @@ def process_turn(player):
     choice = action_prompt()
     if choice == 1:
         player.mine(d)
-    elif choice == 2 and player.resources[0] >= 100:
+    elif choice == 2 and player.resources[0] >= 10*(player.resources[5]+1):
         player.dock(d)
     elif choice == 3:
         player.work(d)
@@ -116,19 +122,32 @@ def has_lost(player):
     return player.resources[3] == 0 or player.resources[4] == 0
 
 
+def calculate_score(player):
+    total = 0
+    index = 0
+    for x in player.resources:
+        if index is 0:
+            total += player.resources[index]
+        elif index is 4:
+            total -= player.resources[index]
+        else:
+            total += player.resources[index] * 10
+        index += 1
+    return total
+
+
 ##############
 # ENCOUNTERS #
 ##############
 
 # General Notes:
-#   The content below contains 20 encounters, the first 10 are research encounters, and the last 10 are exploration
-#   encounters.
 #
 #   Encounter() constructor parameters are in the following order:
 #   description, choice1, choice2, win message, win resources, lose message, lose resourced, mod, rating
 #
 #   The reward must be in a list in the standard resource order:
 #   [Credits, Food, Fuel, Hull, Stress, Crew, Wisdom]
+
 
 # RESEARCH ENCOUNTERS:
 research_encounters = encounterGroup()
@@ -321,7 +340,7 @@ exploration_encounters.add(Encounter(
     You find this strange because these stones are very valuable, yet they're just laying there. It is actually against 
     Lugmere law to possess that many stones, in order to limit one's total raw power output. Near the pile sits a hooded 
     figure, who appears to be badly wounded. The injured person notices your airship and yells out for help! On one hand 
-    you can kill them and take the Flux stones for yourself, as any witnesses would report you to the law. 
+    you can kill the person and take the Flux stones for yourself, as any witnesses would report you to the law. 
     On the other hand, you can help the figure, and hope they reward you with a share of Flux stones.
     ''',
     "Attempt to kill the injured person and steal the Flux stones.",
@@ -440,10 +459,10 @@ exploration_encounters.add(Encounter(
     that the claw holding The Maw in place is lacking Flux power in the levers holding the clamp at its hinges. They 
     figure that 30 more Flux would be enough to sustain the prison for another 200 years. However, such an amount is 
     illegal and hard to possess, and the idea is quickly dismissed by the lab scholars who have another idea. They 
-    theorize that by sacrificing 30 people to The Maw would calm her, claiming that it would satisfy the outerworld. 
-    One core reason they believe this will work, is because there have been eyewitness accounts of a portal located 
-    inside The Maw's mouth, which is similar in appearance to those that lead to the outerworld. Armed with this 
-    information, you wait till the Orson lab professionals deem it safe to leave the volcano, and you go on your way.
+    theorize that by sacrificing 30 people to The Maw would calm her, claiming that it would satisfy her hunger. 
+    The Maw eats hundreds of people a year, however they come in small doses. A large amount at one time could calm her,
+    giving Lugmere time to find a more permanent solution. Armed with this information, you wait till the Orson lab 
+    professionals deem it safe to leave the volcano, and you go on your way.
     ''',
     [0, -1*d.hidden_roll(2), 0, 0, -5*d.hidden_roll(2), 0, 2],
     '''
@@ -493,12 +512,6 @@ exploration_encounters.add(Encounter(
 ))
 
 
-def encounter_maw(player):
-    print('''
-        This is it
-    ''')
-
-
 # Pre: Given a list of strings that represent a choice the player can make,
 # Post: Returns an integer representing the choice the player picked.
 def pick_choice(choices):
@@ -513,6 +526,214 @@ def pick_choice(choices):
             continue
         if decision in range(1, len(choices)+1):
             return decision
+
+
+# Pre: Given a player,
+# Post: Will deliver the player through the content regarding the end of the game.
+def encounter_maw(player):
+    maw_phase2(player, maw_phase1())
+
+
+# Post: Will return an integer that represents the player's choice in phase 1.
+def maw_phase1():
+    print('''
+    The clouds below Lugmere are swirling more violently as The Maw shakes and rattles the entire district. After
+    traveling across the land for what seems like an eternity, you finally make your way back to the capital. As you
+    approach the floating prison in the middle of the city, you realize you have a choice to make. How should you 
+    approach saving Lugmere?
+    ''')
+    choice1 = pick_choice(["Attempt to kill The Maw.",
+                           "Attempt to seal The Maw.",
+                           "Give up."])
+    print('''
+    You drift closer to the gaping hole that forms beneath Lugmere. The Maw's stench of rotten flesh and dried blood
+    fills your nose. You realize that you would rather take in Lugmere's musky smog than this scent. As you get
+    closer, you can hear the hoarse breathing of The Maw. Her struggle and mere presence strikes fear into
+    everyone on board.
+    ''')
+    return choice1
+
+
+# Pre: Given a player and a decision made in phase 1,
+# Post: Returns an integer that represents a choice the player made in phase 2.
+def maw_phase2(player, choice1):
+    player.add([0, 0, 0, 0, -d.roll(10), 0, 0])
+    if choice1 == 1:
+        print('''
+        A few ideas cross your mind. You can use the rest of your Flux and make a highly destructive bomb, capable of
+        leveling even Lugmere if you have enough Flux, and drop it into The Maw's mouth. Or you can use the Flux to
+        overload the claw clamping on The Maw and have it slices The Maw in two. Another idea is to use your crew and 
+        form a fleet to assault The Maw herself. Lastly, you can mind meld with The Maw and use your willpower to
+        overtake her. How should you proceed? 
+        ''')
+        choice2 = pick_choice(["Use a bomb.", "Overload the clamp.", "Organize an assault."])
+    else:
+        print('''
+        A few ideas cross your mind. You can use your Flux to fortify the clamp holding The Maw, leaving the problem for
+        later generations. Or you can make a precise sacrifice to The Maw, hoping to sate her hunger. Another idea is to
+        have your crew mind meld against her and suppress her mind. Lastly, you can release The Maw from the prison,
+        hoping it will subdue herself, given the poor conditions of her captivity. How should you proceed? 
+        ''')
+        choice2 = pick_choice(["Make a worthy sacrifice.", "Group mind meld.", "Release The Maw."])
+    return choice2
+
+
+# Pre: Given choice2, which was a decision made to kill the Maw
+# Post: Returns an integer that represents the outcome of the chosen solution.
+def maw_phase3a(player, choice2):
+    if choice2 is 1:
+        print('''
+        You muster your crew to start assembling what might be the largest bomb Lugmere has ever seen. Due to
+        strict laws on Flux, such a feat has not been attempted before until now. Everyone heaves in unison as
+        they lug all the Flux on board into a pile. You carefully arrange and secure them in a bundle, and
+        attach a timer. Soon, everyone is huddled in a circle around the creation, staring in awe. You look
+        around, take a deep breathe, and slowly roll it off the side into the abyss. Everyone leans over the
+        side of the airship, staring in silence as it disappears into the distance. You hear nothing, but see
+        a giant flash of light. "Look away!" someone shouts, as everyone falls back.    
+        ''')
+        if player.resources[2] >= 30:
+            print('''
+                Shortly after, you hear the thunderous boom of the bomb, and your airship is thrust upwards by the 
+                updraft! An ear piercing cry rings out, striking fear into everyone in Lugmere. Then silence. 
+                An uncomfortable silence falls over the district; no more ambient growling or drafts from what used 
+                to be The Maw. Such a peace tells you that the beast is definitely gone, but is it dead? That's a 
+                question for another day. The updraft from the explosion carried you high above Lugmere, and you and 
+                your crew watch the sun set, satisfied that Lugmere can live to see at least one more day. 
+            ''')
+        else:
+            print('''
+            Shortly after, you hear a boom, which jolts your airship slightly. Everyone peers over the side to check
+            the damage. You hear silence, then suddenly, The Maw lets out a thunderous roar... The bomb failed.   
+            You tried your hardest but it's in vain. The Maw appears to have resisted your efforts just enough and 
+            escapes the clamp holding her in place. She rips out of the wires and cords that connect here to Lugmere's 
+            power grid and she dives into the abyss of clouds below Lugmere, quickly disappearing just as mysteriously 
+            as she appeared. 
+            ''')
+            maw_effort_failure(player)
+        player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
+    elif choice2 is 2:
+        print('''
+        You quickly move your airship to the viewing deck for the clamp. You organize your crew to transport the Flux
+        into the main generator for the clamp. Everyone heaves in unison as they pass pieces of Flux to one another,
+        making the process smooth and efficient.
+        ''')
+        if player.resources[2] >= 30 or (player.resources[2] >= 20 and player.resources[5] >= 20):
+            print('''
+            You stuff the generator with an unprecedented amount of Flux, so dangerously packed that it could explode
+            any minute and level the entirety of Lugmere. Not knowing if the generator can even process such a large
+            amount, you rush up to the main control room, where you can get a good view of the prison clamping down
+            on The Maw. The claws dig into The Maw's flesh, preventing it from escaping, but also causes immense
+            suffering. You're about to make that pain so much more worse... You smash a glass box at the back of the 
+            room and remove a key, which allows you to turn a dial past the marked limits on the dashboard. Shortly 
+            after you turn it, you see the clamp vibrating, and The Maw instantly lets out an ear piercing cry! The
+            Maw is trying to fight the pressure! You watch in horror as the brass clamp in one fluid motion, rips 
+            through the fleshy body of The Maw, as if she had given up the struggle. It rips clean through her, and
+            she is instantly silenced. Your jaw drops as you stare in awe at the stump that used to be The Maw. The 
+            colossal severed body of The Maw falls into the abyss below Lugmere, disappearing from sight. No more
+            will Lugmere's citizens have to wake up in fear that one day she may escape. Although Lugmere's main power
+            source is gone, you're confident that this new found relief will give the population a reason to work
+            together. 
+            ''')
+        else:
+            print('''
+            You stuff the generator with as much Flux as you have. Not knowing if the generator can even process such an
+            amount, you rush up to the main control room, where you can get a good view of the prison clamping down
+            on The Maw. The claws dig into The Maw's flesh, preventing it from escaping, but also causes immense
+            suffering. You're about to make that pain so much more worse... You smash a glass box at the back of the 
+            room and remove a key, which allows you to turn a dial past the marked limits on the dashboard. Shortly 
+            after you turn it, you see the clamp vibrating, and then it stops. You realize you've expelled all the
+            power at one time, and failed to snap The Maw in two. Now, nothing is holding her back from slithering out.
+            
+            You tried your hardest but it's in vain. The Maw appears to have resisted your efforts just enough and 
+            escapes the clamp holding her in place. She rips out of the wires and cords that connect here to Lugmere's 
+            power grid and she dives into the abyss of clouds below Lugmere, quickly disappearing just as mysteriously 
+            as she appeared. 
+            ''')
+            maw_effort_failure(player)
+        player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
+    else:
+        print('''
+        You trust your crew. You've been through the toughest and worst of times, some even sticking with you now.
+        You're amazed that none of them have cowered in fear and fled, tail between their legs, rather deciding to help
+        Lugmere and stop The Maw. "These men and women will make great soldiers" you tell yourself, and decide to lead
+        them and mount a frontal assault on The Maw. You assemble your crew, along with local volunteers from Lugmere,
+        into several airships armed with Flux cannons. They follow your airship as you spearhead the assault. You
+        descend below the undercity of Lugmere, and enter the storm brewing below...
+        
+        A sea of snake like arms surround your army, forming walls that prevent your escape. You realize that you've
+        underestimated the sheer size and power of The Maw, as she closes her grip around you. You command your army to
+        begin firing the cannons, and they let loose a volley of volatile Flux projectiles, which seem to only be
+        absorbed into the tough hide of The Maw. It seems with each volley, The Maw grows stronger. Perhaps The Maw
+        is immune to Flux? She draws closer and closer, as her arms proceed to swat your army out of the air as if they
+        were flies. Soon enough, it is just you and her, and she stares are you with 1,000 eyes. They all blink at
+        different times, producing a shimmering sequence of enraged stares. She grins a giant smile, revealing her
+        blood covered teeth, covered with severed human bodies. The Maw opens her mouth and swallows you into darkness.
+        With no one left to stop her, escaping from her prison is only a matter of time...
+        ''')
+        maw_effort_failure(player)
+
+
+# Pre: Given choice2, which was a decision made to seal the Maw
+# Post: Returns an integer that represents the outcome of the chosen solution.
+def maw_phase3b(player, choice2):
+    if choice2 is 1:
+        print('''Desperate times call for desperate measures. There is no easy way to say it, so you decide to be blunt.
+        You round up all your naive crew members on the upper main deck, and tell them that they are going to be 
+        sacrificed to The Maw. The majority of them are surprisingly willing to sacrifice themselves for Lugmere, 
+        however there are always those who prefer to save themselves rather than die for their people. The protesting 
+        is getting worse, and soon they begin to persuade others. You've already committed to this decision, and there 
+        isn't enough time to choose a different course of action. You decide to lock your entire crew on the upper main
+        deck while you retreat to the pilot's cabin. While bickering among themselves, you move the airship even closer
+        to The Maw. Your hands shake at what you're about to do next. You whisper "Please forgive me" as you rotate
+        your airship on it's side, causing your crew to fall off, straight into The Maw's gaping mouth. You can hear
+        panic, enraged screaming mixed in with pleading and praying as some crew members managed to grip to the ship.
+        You can't let them live, not after what you just did. You continue to tilt the airship, and soon they all fall.
+        ''')
+        if player.resources[5] >= 30:
+            print('''As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
+            silence. You ponder your decision, and know that you will live in grief forever for what you just did. 
+            Suddenly however, The Maw stops struggling. It simply stops resisting the prison, and sits content, almost 
+            groaning with satisfaction. It is a strangely peaceful sight, but you realized your sacrifice have sated The
+            Maw. No more will Lugmere's citizens have to wake up in fear that one day she may escape, because right now,
+            there seems to be no effort. You've bought more time for Lugmere to find a more permanent solution, but
+            maybe making large scale sacrifices are the future? You've changed Lugmere in more ways than you can imagine.
+            ''')
+        else:
+            print("")
+    elif choice2 is 2:
+    else:
+
+
+def maw_effort_failure(player):
+    print('''
+    From this day on, Lugmere will remain in a state of decay. When The Maw left, she took Lugmere's electricity with 
+    her. Many power generators will revert back to using Flux, which is slowly but surely becoming more and more scarce. 
+    Because this non renewable resources holds up the islands, it won't be long before war breaks out in Lugmere, as 
+    islands will begin to turn on each other for their Flux. You realize this is the end of an era, and that Lugmere 
+    will fall back to more primitive ways.
+    
+    The fear that The Maw might one day return haunts every citizen of Lugmere, which will eventually cause the
+    government to break down. Perhaps if the threat was really gone, Lugmere might be able to find a new beginning in
+    this state of decay, but unfortunately, Lugmere will forever be in the dark... That is, until The Maw returns for
+    vengeance.
+    ''')
+
+
+def maw_sanity_failure():
+    print()
+
+
+def loss_by_sanity():
+    print('''
+    You can't take it anymore. Your head pulses with all the horrors of R'yleh, and you feel like there are things you 
+    are not supposed to know. You wake up in the morning in a daze. Doctors don't know what's wrong with you. People 
+    say you repeat phrases like "it's hopeless" or "she's won", little snippets that have caused your closest friends 
+    to send you to Lugmere's asylum for the insane. You don't care, why would you anyways? The only thing that matters 
+    is her. She fills your thoughts all day, and it feels like she's talking to you. "Come child, I need you" she says. 
+    The line between your thoughts and reality blurs. No one visits you because you feel like no one understands you. 
+    Your only visitors are strange hooded figures. They bear the insignia of The Mawful on their chest; a headless 
+    person. One of them reaches a hand out to you, and repeats "Come child, I need you", and you take their hand.
+    ''')
 
 
 # Starts a game of Lugmere's Loss.
