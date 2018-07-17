@@ -17,7 +17,7 @@ class Player:
         self.MAX_HULL = 10
         self.MAX_SANITY = 100
 
-        self.resources = [300, 15, 1, 10, 0, 1, 0]
+        self.resources = [300, 15, 1, 10, 100, 1, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
         self.name = input("What is your name? ")
         # Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
@@ -153,6 +153,22 @@ class Player:
             print("You feed your party " + str(hunger) + " " + self.resource_names[1] + ".")
             self.add([0, -hunger, 0, 0, 0, 0, 0])
 
+    # Pre: Given an optional parameter of an int that represents a bonus to be added to the player's score,
+    # Post: Returns an integer that is the result of all player's resources added up in a specific way. Everything but
+    # credits and sanity are multiplied by 10 and added. Credits are added without a multiplier. Sanity is subtracted
+    # because having more sanity is better. Lastly, a bonus can be added before returning the final score.
+    def calc_score(self, bonus=0):
+        total = 0
+        index = 0
+        for x in self.resources:
+            if index is 0:
+                total += self.resources[index]
+            elif index is 4:
+                total -= self.resources[index]
+            else:
+                total += self.resources[index] * 10
+            index += 1
+        return total + bonus
 
 
             

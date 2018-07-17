@@ -57,7 +57,7 @@ def game_handler(players, turn, max_turns):
         turn += 1
     for player in players:
         # print("Maw Encounter")
-        print(player.get_name() + "'s SCORE IS: " + str(calculate_score(player)))
+        print(player.get_name() + "'s SCORE IS: " + str(player.calc_score()))
     # After MAX_TURNS, encounter The Maw.
 
 
@@ -120,20 +120,6 @@ def process_turn(player):
 # Post: Will check if the player has lost, which is when the player reaches 0 of two important resources.
 def has_lost(player):
     return player.resources[3] == 0 or player.resources[4] == 0
-
-
-def calculate_score(player):
-    total = 0
-    index = 0
-    for x in player.resources:
-        if index is 0:
-            total += player.resources[index]
-        elif index is 4:
-            total -= player.resources[index]
-        else:
-            total += player.resources[index] * 10
-        index += 1
-    return total
 
 
 ##############
@@ -506,7 +492,8 @@ exploration_encounters.add(Encounter(
     are even swearing vengeance on The Maw. However, as these vengeful crew members slowly succumb to their injuries,
     a depressing lull sets in... This was just a taste of The Maw's power.
     ''',
-    [-100*d.hidden_roll(4), -1*d.hidden_roll(4), -1*d.hidden_roll(4), -1*d.hidden_roll(4), -5*d.hidden_roll(5), -1*d.hidden_roll(4), 3],
+    [-100*d.hidden_roll(4), -1*d.hidden_roll(4), -1*d.hidden_roll(4), -1*d.hidden_roll(4), -5*d.hidden_roll(5),
+     -1*d.hidden_roll(4), 3],
     -4,
     10
 ))
@@ -531,7 +518,9 @@ def pick_choice(choices):
 # Pre: Given a player,
 # Post: Will deliver the player through the content regarding the end of the game.
 def encounter_maw(player):
-    maw_phase2(player, maw_phase1())
+    choice2 = maw_phase2(player, maw_phase1())
+    if choice2 is 1:
+
 
 
 # Post: Will return an integer that represents the player's choice in phase 1.
@@ -609,7 +598,7 @@ def maw_phase3a(player, choice2):
             power grid and she dives into the abyss of clouds below Lugmere, quickly disappearing just as mysteriously 
             as she appeared. 
             ''')
-            maw_effort_failure(player)
+            maw_effort_failure()
         player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
     elif choice2 is 2:
         print('''
@@ -649,7 +638,7 @@ def maw_phase3a(player, choice2):
             power grid and she dives into the abyss of clouds below Lugmere, quickly disappearing just as mysteriously 
             as she appeared. 
             ''')
-            maw_effort_failure(player)
+            maw_effort_failure()
         player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
     else:
         print('''
@@ -670,14 +659,16 @@ def maw_phase3a(player, choice2):
         blood covered teeth, covered with severed human bodies. The Maw opens her mouth and swallows you into darkness.
         With no one left to stop her, escaping from her prison is only a matter of time...
         ''')
-        maw_effort_failure(player)
+        maw_effort_failure()
 
 
 # Pre: Given choice2, which was a decision made to seal the Maw
-# Post: Returns an integer that represents the outcome of the chosen solution.
+# Post: Returns an integer that represents a bonus to be added to the player's score for the chosen solution. Some
+# solutions lead to an additional sanity event as a last ditch effort to defeat the maw.
 def maw_phase3b(player, choice2):
     if choice2 is 1:
-        print('''Desperate times call for desperate measures. There is no easy way to say it, so you decide to be blunt.
+        print('''
+        Desperate times call for desperate measures. There is no easy way to say it, so you decide to be blunt.
         You round up all your naive crew members on the upper main deck, and tell them that they are going to be 
         sacrificed to The Maw. The majority of them are surprisingly willing to sacrifice themselves for Lugmere, 
         however there are always those who prefer to save themselves rather than die for their people. The protesting 
@@ -690,21 +681,85 @@ def maw_phase3b(player, choice2):
         You can't let them live, not after what you just did. You continue to tilt the airship, and soon they all fall.
         ''')
         if player.resources[5] >= 30:
-            print('''As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
+            print('''
+            As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
             silence. You ponder your decision, and know that you will live in grief forever for what you just did. 
             Suddenly however, The Maw stops struggling. It simply stops resisting the prison, and sits content, almost 
-            groaning with satisfaction. It is a strangely peaceful sight, but you realized your sacrifice have sated The
+            groaning with satisfaction. It is a strangely peaceful sight, and you realize your sacrifice has sated The
             Maw. No more will Lugmere's citizens have to wake up in fear that one day she may escape, because right now,
             there seems to be no effort. You've bought more time for Lugmere to find a more permanent solution, but
-            maybe making large scale sacrifices are the future? You've changed Lugmere in more ways than you can imagine.
+            maybe making large scale sacrifices is the future? You've changed Lugmere in more ways than you can imagine.
             ''')
         else:
-            print("")
+            print('''
+            As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
+            silence. You ponder your decision, and know that you will live in grief forever for what you just did. You
+            realize you've been pondering for a while, and nothing has changed. The Maw still lets out irritating
+            cries while she thrashes about in the prison. 
+            ''')
     elif choice2 is 2:
-    else:
+        print('''
+        You and your crew drift closer to the viewing deck for The Maw's prison. You gaze across the clouds to see a
+        giant claw digging into the body of the beast, clenching it in place, albeit for not much longer. You can hear
+        the creaking of the metal as it begins to weaken, so time is of the essence. You land and walk across the deck
+        of the viewing platform until you and your crew are face first with the surface of The Maw. You take a look.''')
+        d.fake_roll(14)
+        print('''
+        A closer inspection of the hairs that line the beast reveal that they are actually small suction cups held to 
+        her body by strings of flesh. They appear to be human sized, and look like all sorts of types, from sharp, razor
+        teeth linings, to beautiful flower like flaps that ooze nectar. A nearby Maw prison station manager explains
+        that several workers have died trying to explore the strange opportunity, and that the ones who have lived went
+        insane, living out the rest of their days in Lugmere's Insane Asylum. You tell your crew to each take a cup
+        and engulf their head. Some choose appendages that appear like creatures, others choose the ones shaped like
+        flowers. Regardless, they are all quite grotesque and ooze different strangely colored liquids. You trust the
+        mental fortitude of your crew, as you have been together through a lot. Everyone fearfully dons the helmets and 
+        are whisked away in mind and spirit into The Maw.
+        ''')
+        print('''
+        You find yourself worrying. You are lost in your thoughts, and can picture yourself, but from a perspective
+        outside of your body. You see yourself with your crew standing at the skin of the creature. Flashes of light
+        cloud your vision, and you feel like you're being squished.
+        ''')
+        d.fake_roll(17)
+        print('''
+        You sucessfully resist the pressure, pushing back with a force much greater. You can hear the thoughts of
+        all your crew members, as they cheer and egg each other on. You push harder, not physically, but just
+        enough to resist the pull of The Maw. 
+        ''')
+        if player.resources[5] >= 20 and player.resources[6] >= 10:
+            d.fake_roll(12)
+            print('''
+            You can feel The Maw weakening. It seems that her endurance is waning, and you and your crew take this as
+            a chance to push her out. You feel your souls climb higher and higher into her mind as you soar past
+            vivid colors and sights of gore. Entering her mind is both scary but encouraging, and you're one step closer
+            to sealing her for good. Suddenly, you find yourself at the heart of her mind, and her struggle ceases.
+            Your mind slowly melds with her's and your thoughts are jumbled with her intentions. You feel the pain of
+            the prison clamping down on you, and Lugmere's constant jabbing for power. Suddenly, your mind is clouded
+            by the thoughts of your other crew members, as everyone floods into the same consciousness. You find it 
+            impossible to control The Maw's actions, and everyone's will is against a collected composure. As a result,
+            she stands still. So still that you notice what her eyes see, or rather, your eyes now. You peer out from
+            the center of Lugmere and see that the district has completely changed. Instead of what once was a dirty 
+            city is now a pristine, glowing, lofty collection of polished buildings and unknown technology. You notice
+            that at the center of the main square of Lugmere is a display.. You peer closer and find it dedicated to
+            you and your crew! You swear you were only gone for a mere hour in the mental battle, but you realize that
+            the time must have passed one hundred fold. Your happiness for the new state of Lugmere is quickly
+            overshadowed by the depression that sets in because of your current state, You wonder how you can escape
+            the seemingly eternal torment you feel as the claw prison digs into your body.
+            ''')
+        else:
+            d.fake_roll(0, 4)
+            print('''
+            Suddenly, her power increases. Out of what seems like nowhere, she thrusts you and your crew's mental states
+            into hell. Violence and horror are all that fill your minds, and you quickly become scared. So scared in 
+            fact that you can't bear her terrible mindscape any longer, and you wish to escape. You feel your 
+            perspective shift inwards as you travel back towards your body. You try to collect your conscience and
+            identity as you quickly flush yourself back out into reality. You find yourself, helmet off, back in 
+            Lugmere, and you collapse onto the ground.
+            ''')
 
 
-def maw_effort_failure(player):
+
+def maw_effort_failure():
     print('''
     From this day on, Lugmere will remain in a state of decay. When The Maw left, she took Lugmere's electricity with 
     her. Many power generators will revert back to using Flux, which is slowly but surely becoming more and more scarce. 
@@ -720,19 +775,25 @@ def maw_effort_failure(player):
 
 
 def maw_sanity_failure():
-    print()
+    print('''
+    You grieve for Lugmere. The sheer power of The Maw has gotten into your mind and messing with your thoughts. You
+    collapse into a state of isolation, and feel the need to do nothing. You no longer care about this world, or the
+    next, and no longer worry about Lugmere. But this isn't a state of peace, but rather a state of longing. You long
+    for Her, and wish to connect with The Maw. 
+    ''')
 
 
 def loss_by_sanity():
     print('''
-    You can't take it anymore. Your head pulses with all the horrors of R'yleh, and you feel like there are things you 
-    are not supposed to know. You wake up in the morning in a daze. Doctors don't know what's wrong with you. People 
-    say you repeat phrases like "it's hopeless" or "she's won", little snippets that have caused your closest friends 
-    to send you to Lugmere's asylum for the insane. You don't care, why would you anyways? The only thing that matters 
-    is her. She fills your thoughts all day, and it feels like she's talking to you. "Come child, I need you" she says. 
-    The line between your thoughts and reality blurs. No one visits you because you feel like no one understands you. 
-    Your only visitors are strange hooded figures. They bear the insignia of The Mawful on their chest; a headless 
-    person. One of them reaches a hand out to you, and repeats "Come child, I need you", and you take their hand.
+    You can't take it anymore. Your head pulses with all the horrors of R'yleh, and you feel like there are 
+    things you are not supposed to know. You wake up in the morning in a daze. Doctors don't know what's wrong with you. 
+    People say you repeat phrases like "it's hopeless" or "she's won", little snippets that have caused your closest 
+    friends to check you into Lugmere's asylum for the insane. You don't care, why would you anyways? The only thing 
+    that matters is her. She fills your thoughts all day, and it feels like she's talking to you. 
+    "Come child, I need you" she says. The line between your thoughts and reality blurs. No one visits you because you 
+    feel like no one understands you. Your only visitors are strange hooded figures. They bear the insignia of 
+    The Mawful on their chest; a headless person. One of them reaches a hand out to you, and repeats 
+    "Come child, I need you", and you take their hand...
     ''')
 
 

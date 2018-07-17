@@ -183,6 +183,7 @@ Lore Friendly:
     The Maw's main weakness is lava, as it is hot enough to ignite the oil on its skin.
     Flux and The Maw's energy are the same. Feeding The Maw Flux gives Lugmere a power surge.
     The Maw powers Lugmere with Flux.
+    Lugmere's insane asylum
 
 Hmm. Rethinking this:
 There is a starting scenario, that branches into two, and each of those branch into two. This results in 4 outcomes.

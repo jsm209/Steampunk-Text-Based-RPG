@@ -24,3 +24,16 @@ class Dice:
     def hidden_roll(self, sides):
         roll = random.randint(1, sides)
         return roll
+
+    # Pre: Given an integer that represents a lower limit of the roll, and an optional integer that represents the
+    # upper limit,
+    # Post: Fakes a d20 roll by intentionally tampering with the result. If you care about the result, use the regular
+    # roll method instead. This is purely for flavor.
+    def fake_roll(self, limit, upperlimit=20):
+        input("[PRESS ENTER TO ROLL A " + str(20) + " SIDED DICE] ")
+        roll = random.randint(1, 20)
+        if roll < limit:
+            roll += (limit-roll)
+        if roll > upperlimit:
+            roll -= (upperlimit-roll)
+        print("**You rolled a " + str(roll) + "!**")
