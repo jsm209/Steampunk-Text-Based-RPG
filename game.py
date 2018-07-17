@@ -8,14 +8,60 @@ from player import *
 #############
 # CONSTANTS #
 #############
-MAX_TURNS = 13
+MAX_TURNS = 2
 
 d = Dice()  # A dice to share with all the game mechanics.
 
 
 # Post: Presents an introduction
 def opening_story():
-    print("Opening story.")
+    text_box("The Story So far...")
+    print('''
+    Welcome to the Metropolis of Lugmere, a flying mechanical collection of floating isles, housing a population plagued 
+    by rampant pollution and tense historical turmoil. Lugmere lives on its alien power source found at the center of 
+    the capital and trade economy ran by airships. Airships of all sizes and craft drift by the balconies of the 
+    local populance as they fill the air with exhaust and advertisments. Every soul down to the rats know that falling 
+    into the murky clouds below means certain death, but the tight alleyways and canals allow for lucky individuals to 
+    grasp onto nearby buildings or other airships if they fell. However, it is not the distance that will end those poor 
+    unlucky souls, but rather a horror so terrible that everyone lives in denial of its existence, except for 
+    "The Mawful", a local cult who worships the being. They derive their will from this being, making the cult's 
+    insignia of a headless body ever more appropriate.
+    
+    The cult has since been banished to the underbelly of the metropolis, where they worship the being in secret. 
+    Known as "The Maw", she sits underneath the entirety Lugmere, lurking below the collection of floating isles, 
+    waiting for her chance to swallow up poor souls who drift or fall too close. Her size is exact size is unknown, but 
+    it is known that compared to her gargantuan size, Lugmere is but the tip of a pin. The origins of the beast remain 
+    unknown but the history is forever buried within Lugmere. Researchers and professors of Lugmere's most prestigious
+    "Orson Laboratories" theorize that she lost her way from The Outerworld, more specifically, the Kingdom of R'yleh.
+    
+    The Maw was sealed away 200 years ago with the help of a giant mechanical claw that grips so tight onto the beast 
+    that at night, ear piercing wails of pain can be heard if you live close enough to the undercity district. Wires 
+    stab into the creature so that with each cry, they light up to deliver power to the entire city. Strange liquids 
+    ooze out of the wounds where the claw tears into The Maw, and is more cruel than even the most horrific of tortures.
+    This is the heart of Lugmere, a literal beating of energy that paved the way for 200 years of unprecedented 
+    developments in science and research.
+    
+    The world is ran on The Maw and a mysterious resource called "Flux". These delicate nugget sized ores are found 
+    towards the base of all the isles, and glow with a tinge of light similar to electricity. Removing them will cause 
+    the isle to slowly fall back to the surface, making Flux a limited resource. People have perished from
+    simply dropping unrefined Flux, as a single unit is enough to explode an entire airship. Therefore, it is illegal to
+    obtain vast quantities of the matter. It is also illegal to mine Flux from islands not dedicated to mining, because 
+    it would doom anyone living on the landmass. Lugmere slowly lost its reliance on Flux in favor of The Maw, however 
+    recent power surges and unidentifiable noises from The Maw forced the royal technicians to revisit the horror...
+    
+    ... The technicians reported that the beast is roaring and struggling, slowly weakening the grip of the
+    floating prison. They estimate that even with continuous reinforcement and additional Flux that they can hold out 
+    for less than a month before The Maw escapes Lugmere's hold. A call has been made to all citizens of the metropolis 
+    to prepare for one of two outcomes; for them to help find a solution, or band together to take down the beast.
+    
+    The announcement panicked the population, causing some to go insane or defect to the local cult. Either way, both
+    victim's symptoms would warrant them a room in Lugmere's Insane Asylum. However, they are correct to fear fate, 
+    because if The Maw escapes, Lugmere would revert to primitive times, using Flux again. The government knows that
+    if this were to happen, Lugmere would be doomed because it would be only a matter of time before Flux became scarce,
+    promoting stealing, violence, and Lugmere plummeting, returning to the surface once more.
+    
+    It is up to you to find a way to save Lugmere.
+    ''')
 
 
 # Post: Advances the turn counter by 1
@@ -24,14 +70,24 @@ def next_turn():
     TURN += 1
 
 
+# Pre: Given a string,
+# Post: Will print out the given string, but surrounded by "#".
+def text_box(text):
+    string = "# " + text + " #"
+    print()
+    print("#" * len(string))
+    print(string)
+    print("#" * len(string))
+    print()
+
+
 # Pre: Given a player object,
 # Post: Will carry out all the processes necessary for a single player game of Lugmere's Loss. It presents the initial
 # story, and processes 20 turns before presenting a final encounter.
 def player_turn(player, turn, max_turns):
     if turn <= max_turns and has_lost(player) is False:
         print()
-        print("-" * 50)
-        print("It is the start of day " + str(turn) + " of " + str(max_turns) + ".")
+        text_box("It is the start of day " + str(turn) + " of " + str(max_turns) + ".")
         process_turn(player)
         player.update()
     else:
@@ -39,13 +95,24 @@ def player_turn(player, turn, max_turns):
         # After MAX_TURNS, encounter The Maw.
 
 
-# Pre: Given a list of players,
-# Post: Will carry out single player games for each of the players.
-def game_handler(players, turn, max_turns):
+# Pre: Given an integer that represents the current turn, and another integer that represents the max turns of the game,
+# Post: Will carry out single player games for each of the players, and produce a scoreboard of final scores at the end.
+def game_handler(turn, max_turns):
+
+    # Game setup
+    player_count = input("How many people are playing Lugmere's Loss? ")
+    players = []
+    for x in range(0, int(player_count)):
+        players.append(Player())
+    i = 0
+    while i < len(players):
+        players[i].name = input("What is player " + str(i + 1) + "'s name? ")
+        i += 1
+
+    opening_story()
+    # Regular gameplay
     while turn <= max_turns:
-        print("-" * 50)
-        print("It is the start of day " + str(turn) + " of " + str(max_turns) + ".")
-        print("-" * 50)
+        text_box("It is the start of day " + str(turn) + " of " + str(max_turns) + ".")
         for player in players:
             if has_lost(player) is False:
                 process_turn(player)
@@ -55,10 +122,17 @@ def game_handler(players, turn, max_turns):
                 print(player.get_name() + " has gone insane.")
                 players.remove(player)
         turn += 1
+
+    # The Maw encounters
+    final_scores = []
     for player in players:
-        # print("Maw Encounter")
-        print(player.get_name() + "'s SCORE IS: " + str(player.calc_score()))
-    # After MAX_TURNS, encounter The Maw.
+        text_box(player.get_name() + " encounters The Maw.")
+        final_scores.append(encounter_maw(player))
+    text_box("FINAL SCORES")
+    i = 0
+    while i < len(players):
+        print(players[i].get_name() + "'s SCORE IS: " + str(final_scores[i]))
+        i += 1
 
 
 # Post: Presents the user with 5 courses of action, and returns a valid integer 1-5 that represents the chosen action.
@@ -85,10 +159,7 @@ def action_prompt():
 # assuming the player has the resources to do so. If the action was not able to be performed (due to a lack of
 # resources) it asks the player again for a different decision.
 def process_turn(player):
-    print()
-    print("-" * 50)
-    print(player.get_name() + ", you have: ")
-    print("-" * 50)
+    text_box(player.get_name() + ", you have: ")
     print()
     player.get_count()
     print()
@@ -516,11 +587,16 @@ def pick_choice(choices):
 
 
 # Pre: Given a player,
-# Post: Will deliver the player through the content regarding the end of the game.
+# Post: Will deliver the player through the content regarding the end of the game, and return an integer for the given
+# player's final score at the end of the game.
 def encounter_maw(player):
+    bonus = 0
     choice2 = maw_phase2(player, maw_phase1())
     if choice2 is 1:
-
+        bonus = maw_phase3a(player, choice2)
+    else:
+        bonus = maw_phase3b(player, choice2)
+    return player.calc_score(bonus)
 
 
 # Post: Will return an integer that represents the player's choice in phase 1.
@@ -532,8 +608,7 @@ def maw_phase1():
     approach saving Lugmere?
     ''')
     choice1 = pick_choice(["Attempt to kill The Maw.",
-                           "Attempt to seal The Maw.",
-                           "Give up."])
+                           "Attempt to seal The Maw."])
     print('''
     You drift closer to the gaping hole that forms beneath Lugmere. The Maw's stench of rotten flesh and dried blood
     fills your nose. You realize that you would rather take in Lugmere's musky smog than this scent. As you get
@@ -546,7 +621,7 @@ def maw_phase1():
 # Pre: Given a player and a decision made in phase 1,
 # Post: Returns an integer that represents a choice the player made in phase 2.
 def maw_phase2(player, choice1):
-    player.add([0, 0, 0, 0, -d.roll(10), 0, 0])
+    player.add([0, 0, 0, 0, -d.hidden_roll(10), 0, 0])
     if choice1 == 1:
         print('''
         A few ideas cross your mind. You can use the rest of your Flux and make a highly destructive bomb, capable of
@@ -580,32 +655,35 @@ def maw_phase3a(player, choice2):
         side of the airship, staring in silence as it disappears into the distance. You hear nothing, but see
         a giant flash of light. "Look away!" someone shouts, as everyone falls back.    
         ''')
+        d.fake_roll(14)
+        player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
         if player.resources[2] >= 30:
             print('''
-                Shortly after, you hear the thunderous boom of the bomb, and your airship is thrust upwards by the 
-                updraft! An ear piercing cry rings out, striking fear into everyone in Lugmere. Then silence. 
-                An uncomfortable silence falls over the district; no more ambient growling or drafts from what used 
-                to be The Maw. Such a peace tells you that the beast is definitely gone, but is it dead? That's a 
-                question for another day. The updraft from the explosion carried you high above Lugmere, and you and 
-                your crew watch the sun set, satisfied that Lugmere can live to see at least one more day. 
+            Shortly after, you hear the thunderous boom of the bomb, and your airship is thrust upwards by the 
+            updraft! An ear piercing cry rings out, striking fear into everyone in Lugmere. Then silence. 
+            An uncomfortable silence falls over the district; no more ambient growling or drafts from what used 
+            to be The Maw. Such a peace tells you that the beast is definitely gone, but is it dead? That's a 
+            question for another day. The updraft from the explosion carried you high above Lugmere, and you and 
+            your crew watch the sun set, satisfied that Lugmere can live to see at least one more day. 
             ''')
+            return 2500
         else:
             print('''
             Shortly after, you hear a boom, which jolts your airship slightly. Everyone peers over the side to check
             the damage. You hear silence, then suddenly, The Maw lets out a thunderous roar... The bomb failed.   
             You tried your hardest but it's in vain. The Maw appears to have resisted your efforts just enough and 
-            escapes the clamp holding her in place. She rips out of the wires and cords that connect here to Lugmere's 
-            power grid and she dives into the abyss of clouds below Lugmere, quickly disappearing just as mysteriously 
-            as she appeared. 
+            escapes the clamp holding her in place. Perhaps the bomb also damaged the claw? She rips out of the wires 
+            and cords that connect here to Lugmere's power grid and she dives into the abyss of clouds below Lugmere, 
+            quickly disappearing just as mysteriously as she appeared. 
             ''')
-            maw_effort_failure()
-        player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
+            return maw_effort_failure()
     elif choice2 is 2:
         print('''
         You quickly move your airship to the viewing deck for the clamp. You organize your crew to transport the Flux
-        into the main generator for the clamp. Everyone heaves in unison as they pass pieces of Flux to one another,
-        making the process smooth and efficient.
+        into the main generator for the clamp. Everyone heaves in unison as they pass pieces of Flux to one another.
         ''')
+        d.fake_roll(14)
+        player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
         if player.resources[2] >= 30 or (player.resources[2] >= 20 and player.resources[5] >= 20):
             print('''
             You stuff the generator with an unprecedented amount of Flux, so dangerously packed that it could explode
@@ -623,6 +701,7 @@ def maw_phase3a(player, choice2):
             source is gone, you're confident that this new found relief will give the population a reason to work
             together. 
             ''')
+            return 2500
         else:
             print('''
             You stuff the generator with as much Flux as you have. Not knowing if the generator can even process such an
@@ -638,8 +717,7 @@ def maw_phase3a(player, choice2):
             power grid and she dives into the abyss of clouds below Lugmere, quickly disappearing just as mysteriously 
             as she appeared. 
             ''')
-            maw_effort_failure()
-        player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
+            return maw_effort_failure()
     else:
         print('''
         You trust your crew. You've been through the toughest and worst of times, some even sticking with you now.
@@ -648,7 +726,9 @@ def maw_phase3a(player, choice2):
         them and mount a frontal assault on The Maw. You assemble your crew, along with local volunteers from Lugmere,
         into several airships armed with Flux cannons. They follow your airship as you spearhead the assault. You
         descend below the undercity of Lugmere, and enter the storm brewing below...
-        
+        ''')
+        d.fake_roll(0, 5)
+        print('''
         A sea of snake like arms surround your army, forming walls that prevent your escape. You realize that you've
         underestimated the sheer size and power of The Maw, as she closes her grip around you. You command your army to
         begin firing the cannons, and they let loose a volley of volatile Flux projectiles, which seem to only be
@@ -659,7 +739,7 @@ def maw_phase3a(player, choice2):
         blood covered teeth, covered with severed human bodies. The Maw opens her mouth and swallows you into darkness.
         With no one left to stop her, escaping from her prison is only a matter of time...
         ''')
-        maw_effort_failure()
+        return maw_effort_failure()
 
 
 # Pre: Given choice2, which was a decision made to seal the Maw
@@ -678,8 +758,9 @@ def maw_phase3b(player, choice2):
         to The Maw. Your hands shake at what you're about to do next. You whisper "Please forgive me" as you rotate
         your airship on it's side, causing your crew to fall off, straight into The Maw's gaping mouth. You can hear
         panic, enraged screaming mixed in with pleading and praying as some crew members managed to grip to the ship.
-        You can't let them live, not after what you just did. You continue to tilt the airship, and soon they all fall.
+        You can't let them live, not after what you just did. You continue to tilt the airship...
         ''')
+        d.fake_roll(10)
         if player.resources[5] >= 30:
             print('''
             As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
@@ -690,6 +771,7 @@ def maw_phase3b(player, choice2):
             there seems to be no effort. You've bought more time for Lugmere to find a more permanent solution, but
             maybe making large scale sacrifices is the future? You've changed Lugmere in more ways than you can imagine.
             ''')
+            return 2500
         else:
             print('''
             As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
@@ -697,6 +779,7 @@ def maw_phase3b(player, choice2):
             realize you've been pondering for a while, and nothing has changed. The Maw still lets out irritating
             cries while she thrashes about in the prison. 
             ''')
+            return maw_sanity_failure()
     elif choice2 is 2:
         print('''
         You and your crew drift closer to the viewing deck for The Maw's prison. You gaze across the clouds to see a
@@ -746,6 +829,7 @@ def maw_phase3b(player, choice2):
             overshadowed by the depression that sets in because of your current state, You wonder how you can escape
             the seemingly eternal torment you feel as the claw prison digs into your body.
             ''')
+            return 2500
         else:
             d.fake_roll(0, 4)
             print('''
@@ -756,7 +840,36 @@ def maw_phase3b(player, choice2):
             identity as you quickly flush yourself back out into reality. You find yourself, helmet off, back in 
             Lugmere, and you collapse onto the ground.
             ''')
-
+            return maw_sanity_failure()
+    else:
+        print('''
+        You see that The Maw is in a lot of pain. You wonder, just maybe, if by releasing The Maw from her pain that
+        she would be subdued in that manner. You drift your airship down to the station that manages The Maw's clamp.
+        As you approach the main control room, a technician stops you. His gruff demeanor and stature tells you he is
+        a stickler for the rules... Telling him you're releasing The Maw undermines the entire purpose of the facility
+        so you'll have to persuade him to pass.
+        ''')
+        d.fake_roll(17)
+        print('''
+        You tell him that have a plan to stop The Maw and that you need access to the main dashboard. He barely seems
+        satisfied, but lets you through. You and some crew members walk into the room, and realize that it is flooded
+        with technicians. You'll need to remove them all if you're to release The Maw, since they are most likely going
+        to hinder and arrest you in the process.
+        ''')
+        d.fake_roll(16)
+        print('''
+        You and your crew carefully arrange yourself in the room around the busy technicians. Simultaneously your crew 
+        dispatches them all at once, while you quickly seal the door! You can hear pounding on the outside, and alarms
+        blaring. The gruff technician from earlier is screaming and cursing at you from the other side of the lock!
+        You casually make your way to the emergency release switches, smash the glass boxes protecting them, and have 
+        you and your crew simultaneously turn 5 knobs and push it in. Suddenly everything stops, the alarms are silent,
+        the station dims its lights, even the gruff technician stares at you in horror. The only source of light is the
+        power surging out of The Maw, as the claw holding her in place releases smoke and steam. It opens, and she sits
+        there, tension filling all of Lugmere. Suddenly, she lets out a terrible roar and makes her move. She rips out 
+        of the wires and cords that connect here to Lugmere's power grid and she dives into the abyss of clouds below 
+        Lugmere, quickly disappearing just as mysteriously as she appeared. 
+        ''')
+        return maw_effort_failure()
 
 
 def maw_effort_failure():
@@ -772,15 +885,19 @@ def maw_effort_failure():
     this state of decay, but unfortunately, Lugmere will forever be in the dark... That is, until The Maw returns for
     vengeance.
     ''')
+    return 100
 
 
 def maw_sanity_failure():
     print('''
-    You grieve for Lugmere. The sheer power of The Maw has gotten into your mind and messing with your thoughts. You
+    You grieve for Lugmere. The sheer power of The Maw has gotten into your mind and is messing with your thoughts. You
     collapse into a state of isolation, and feel the need to do nothing. You no longer care about this world, or the
     next, and no longer worry about Lugmere. But this isn't a state of peace, but rather a state of longing. You long
-    for Her, and wish to connect with The Maw. 
+    for Her, and wish to connect with The Maw. You can't help but spend the rest of your days, cradled up and whispering
+    incoherent phrases to yourself. You're quickly sent to Lugmere's Insane Asylum where you spend the rest of your days
+    staring at a blank wall. You can't wait for Lugmere's inevitable demise.
     ''')
+    return 100
 
 
 def loss_by_sanity():
@@ -798,10 +915,7 @@ def loss_by_sanity():
 
 
 # Starts a game of Lugmere's Loss.
-p1 = Player()
-p2 = Player()
-players = [p1, p2]
-game_handler(players, 1, MAX_TURNS)
+game_handler(1, MAX_TURNS)
 
 
 

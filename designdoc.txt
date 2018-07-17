@@ -148,9 +148,10 @@ Determined to be like the heroine of old, you set out in your airship and begin 
     The value of Flux, how it's a non renewable resource, and how powerfully destructive it is.
     The Outerworld and R'yleh.
     The mistreatement of Lugmere against The Maw
-    The floating prison
+    The floating prison, the claw/clamp
     The sheer size of The Maw
     The position of Lugmere, and relative size to The Maw
+    Lugmere's insane asylum
 
 
 
@@ -183,7 +184,7 @@ Lore Friendly:
     The Maw's main weakness is lava, as it is hot enough to ignite the oil on its skin.
     Flux and The Maw's energy are the same. Feeding The Maw Flux gives Lugmere a power surge.
     The Maw powers Lugmere with Flux.
-    Lugmere's insane asylum
+
 
 Hmm. Rethinking this:
 There is a starting scenario, that branches into two, and each of those branch into two. This results in 4 outcomes.

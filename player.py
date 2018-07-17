@@ -19,7 +19,7 @@ class Player:
 
         self.resources = [300, 15, 1, 10, 100, 1, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
-        self.name = input("What is your name? ")
+        self.name = ""
         # Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
 
     # Post: Returns the player's name as a String.
@@ -32,9 +32,9 @@ class Player:
         print("### RESOURCES & STATS ### ")
         for x in range(0, 7):
             if x == 4:
-                print("# " + self.resource_names[x] + ": " + self.stress_status())
+                print(self.resource_names[x] + ": " + self.stress_status())
             else:
-                print("# " + self.resource_names[x] + ": " + str(self.resources[x]))
+                print(self.resource_names[x] + ": " + str(self.resources[x]))
         print("#########################")
 
     # Post: Check the player's stress, and returns a value of type String, which is a purposely ambiguous description.
