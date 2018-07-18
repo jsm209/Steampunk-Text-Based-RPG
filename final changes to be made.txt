@@ -1,0 +1,21 @@
+as you fly past downtrodden islands
+
+mention that the cavern can flood with lava unexpectedly
+
+need a way to get food without also getting crew
+
+--
+
+steering airship contradicts that the storm can pull them in. Say steer slightly. also say you only have time to either deal with the riftlings, or steer away and deal with the riftlings later.
+
+explicitly say that crew members starving reduces your sanity
+
+If players are disabled, say explicitly that it skips their turn
+
+make a roll to recollect your mind again.
+
+make sure final scores displays everyone's scores even if they're disabled
+
+---
+
+recruiting possibly increases wisdom because someone can bring information with them

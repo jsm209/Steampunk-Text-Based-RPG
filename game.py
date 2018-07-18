@@ -8,7 +8,7 @@ from player import *
 #############
 # CONSTANTS #
 #############
-MAX_TURNS = 2
+MAX_TURNS = 13
 
 d = Dice()  # A dice to share with all the game mechanics.
 
@@ -28,8 +28,8 @@ def opening_story():
     insignia of a headless body ever more appropriate.
     
     The cult has since been banished to the underbelly of the metropolis, where they worship the being in secret. 
-    Known as "The Maw", she sits underneath the entirety Lugmere, lurking below the collection of floating isles, 
-    waiting for her chance to swallow up poor souls who drift or fall too close. Her size is exact size is unknown, but 
+    Known as "The Maw", she sits underneath the entirety of Lugmere, lurking below the collection of floating isles, 
+    waiting for her chance to swallow up poor souls who drift or fall too close. Her exact size is unknown, but 
     it is known that compared to her gargantuan size, Lugmere is but the tip of a pin. The origins of the beast remain 
     unknown but the history is forever buried within Lugmere. Researchers and professors of Lugmere's most prestigious
     "Orson Laboratories" theorize that she lost her way from The Outerworld, more specifically, the Kingdom of R'yleh.
@@ -57,17 +57,44 @@ def opening_story():
     The announcement panicked the population, causing some to go insane or defect to the local cult. Either way, both
     victim's symptoms would warrant them a room in Lugmere's Insane Asylum. However, they are correct to fear fate, 
     because if The Maw escapes, Lugmere would revert to primitive times, using Flux again. The government knows that
-    if this were to happen, Lugmere would be doomed because it would be only a matter of time before Flux became scarce,
+    if this were to happen, Lugmere would be doomed because it would be only a matter of time before Flux becomes scarce,
     promoting stealing, violence, and Lugmere plummeting, returning to the surface once more.
     
     It is up to you to find a way to save Lugmere.
+    
     ''')
+    help()
 
 
-# Post: Advances the turn counter by 1
-def next_turn():
-    global TURN
-    TURN += 1
+# Post: Prints out text that explains the premise of a regular turn.
+def help():
+    text_box("What happens in one turn...")
+    print('''
+    EACH TURN YOU CAN SELECT ONE OF SIX ACTIONS:
+        Mine - Only way to gain Flux (Fuel). May also gain crew and lose food.
+        
+        Dock - Only way to reduce Stress, replenish Hull, and gain Food. Costs 10 credits per party member 
+        (including yoruself), per day.
+        
+        Work - Only way to gain Credits. Scales with amount of crew members (bigger workforce).
+        
+        Recruit - Only way to gain crew.
+        
+        Research - Costs 1 Flux (fuel) and 1 Crew. Gives you a random encounter to possibly gain wisdom.
+        The context is more lore heavy.
+        
+        Explore - Costs 1 Flux (fuel) and 1 Crew. Gives you a random encounter to possibly gain wisdom.
+        The context is more action heavy.
+    
+    AT THE END OF EACH TURN, YOU MUST FEED YOUR PARTY INCLUDING YOURSELF, ONE FOOD EACH. IF YOUR CREW CANNOT BE FED,
+    THEY WILL STARVE AND YOU WILL LOSE SANITY.
+    
+    IF YOUR SANITY DROPS TO ZERO OR YOUR HULL DROPS TO ZERO, YOU BECOME DISABLED AND WILL SPEND DAYS TO RECOVER.
+    IF YOU ARE DISABLED ON THE FINAL DAY, YOU WILL NOT ENCOUNTER THE MAW.
+    
+    AT THE END OF THE GAME, EACH PLAYER'S SCORE IS CALCULATED. PLAYERS WHO RESOLVE THE MAW CONFLICT WILL GAIN A BONUS.
+    ''')
+    input("[PRESS ENTER TO PROCEED]")
 
 
 # Pre: Given a string,
@@ -101,57 +128,58 @@ def game_handler(turn, max_turns):
 
     # Game setup
     player_count = input("How many people are playing Lugmere's Loss? ")
-    players = []
+    players_normal = []
     for x in range(0, int(player_count)):
-        players.append(Player())
+        players_normal.append(Player())
     i = 0
-    while i < len(players):
-        players[i].name = input("What is player " + str(i + 1) + "'s name? ")
+    while i < len(players_normal):
+        players_normal[i].name = input("What is player " + str(i + 1) + "'s name? ")
         i += 1
 
     opening_story()
-    # Regular gameplay
+
+    # Regular game play
+    players_insane = []
     while turn <= max_turns:
         text_box("It is the start of day " + str(turn) + " of " + str(max_turns) + ".")
-        for player in players:
+
+        # Normal Condition
+        for player in players_normal:
             if has_lost(player) is False:
                 process_turn(player)
                 player.update()
+
+            # Currently insane condition
+            elif player in players_insane:
+                print(player.get_name() + " is currently insane. They try to snap out of it.")
+                if d.roll(20) >= 15:
+                    print(player.get_name() + " has sucessfully come to their senses!")
+                    player.resources[4] = 50
+                    players_insane.remove(player)
+                else:
+                    print(player.get_name() + " remains delusional...")
             else:
-                loss_by_sanity()
-                print(player.get_name() + " has gone insane.")
-                players.remove(player)
+
+                # First time disabled
+                if player.resources[4] == 0:
+                    loss_by_sanity()
+                    print(player.get_name() + " has gone insane...")
+                    players_insane.append(player)
+                else:
+                    print(player.get_name() + " has to spend a day repairing their broken airship.")
+                    player.add([0, 0, 0, 2, 0, 0, 0])
         turn += 1
 
-    # The Maw encounters
-    final_scores = []
-    for player in players:
-        text_box(player.get_name() + " encounters The Maw.")
-        final_scores.append(encounter_maw(player))
+    # The Maw encounters only players fit to encounter
+    for player in players_normal:
+        if has_lost(player) is False:
+            text_box(player.get_name() + " encounters The Maw.")
+            player.score += encounter_maw(player)
     text_box("FINAL SCORES")
     i = 0
-    while i < len(players):
-        print(players[i].get_name() + "'s SCORE IS: " + str(final_scores[i]))
+    while i < len(players_normal):
+        print(players_normal[i].get_name() + "'s SCORE IS: " + str(players_normal[i].score))
         i += 1
-
-
-# Post: Presents the user with 5 courses of action, and returns a valid integer 1-5 that represents the chosen action.
-def action_prompt():
-    print("Do you...")
-    print("1: Mine")
-    print("2: Dock [Requires 10 credits per crew member, including yourself]")
-    print("3: Work")
-    print("4: Research [Minimum 1 Flux and 1 Crew]")
-    print("5: Explore [Minimum 1 Flux and 1 Crew]")
-    while True:
-        choice = None
-        try:
-            choice = int(input("[ENTER ANY NUMBER 1-5:] "))
-        except ValueError or choice not in range(1, 6):
-            print("That isn't an option.")
-            continue
-        if choice in range(1, 6):
-            return choice
 
 
 # Pre: Given a valid player object,
@@ -164,27 +192,49 @@ def process_turn(player):
     player.get_count()
     print()
     print("How do you spend your day?")
-    choice = action_prompt()
+    choice = pick_choice(["Mine", "Dock [Requires 10 credits per crew member, including yourself]", "Recruit", "Work",
+                          "Research [Minimum 1 Flux and 1 Crew]", "Explore [Minimum 1 Flux and 1 Crew]", "HELP"])
     if choice == 1:
         player.mine(d)
     elif choice == 2 and player.resources[0] >= 10*(player.resources[5]+1):
         player.dock(d)
     elif choice == 3:
+        player.recruit(d)
+    elif choice == 4:
         player.work(d)
-    elif choice == 4 and player.resources[5] > 0 and player.resources[2] > 0:
+    elif choice == 5 and player.resources[5] > 0 and player.resources[2] > 0:
         player.resources[2] -= 1
         player.resources[5] -= 1
         encounter = research_encounters.get_random_encounter()
         player.add(encounter.get_outcome())
-    elif choice == 5 and player.resources[5] > 0 and player.resources[2] > 0:
+    elif choice == 6 and player.resources[5] > 0 and player.resources[2] > 0:
         player.resources[2] -= 1
         player.resources[5] -= 1
         encounter = exploration_encounters.get_random_encounter()
         player.add(encounter.get_outcome())
+    elif choice == 7:
+        help()
+        process_turn(player)
     else:
         print("You don't have the resources to do that. Please select another course of action.")
         print("You figure exploration and research both need at least one crew member and one Flux stone.")
         process_turn(player)
+
+
+# Pre: Given a list of strings that represent a choice the player can make,
+# Post: Returns an integer representing the choice the player picked.
+def pick_choice(choices):
+    for x in choices:
+        print(str(choices.index(x)+1) + ": " + x)
+    while True:
+        decision = None
+        try:
+            decision = int(input("ENTER 1-" + str(len(choices)) + ": "))
+        except ValueError or decision not in range(1, len(choices)+1):
+            print("That isn't an option.")
+            continue
+        if decision in range(1, len(choices)+1):
+            return decision
 
 
 # Pre: Given a player
@@ -426,12 +476,12 @@ exploration_encounters.add(Encounter(
     '''
     You realize that with more credits you could accomplish so much more. Realizing the gravity of Lugmere's dilemma,
     you figure you can mount a pretty reasonable persuasive argument. You decide to approach the baron of a nearby
-    fief on the outskirts of Lugmere for funding, as the central government only supports military personnel. As fly
-    past downtrodden islands filled with poor villagers and farmland, you realize that this particular baron does not
-    treat his subjects kindly, and must be taxing them for more than the allotted amount. You reason that being closer
-    to the outskirts allows for more leniency with the law. Drifting closer to the baron's reasonably elegant chateau 
-    prompts you to rethink your intentions. Should you still seek funding from the Baron, or should you spread your 
-    wealth to the people?
+    fief on the outskirts of Lugmere for funding, as the central government only supports military personnel. As you 
+    fly past downtrodden islands filled with poor villagers and farmland, you realize that this particular baron does 
+    not treat his subjects kindly, and must be taxing them for more than the allotted amount. You reason that being 
+    closer to the outskirts allows for more leniency with the law. Drifting closer to the baron's reasonably elegant 
+    chateau prompts you to rethink your intentions. Should you still seek funding from the Baron, or should you spread 
+    your wealth to the people?
     ''',
     "Seek help from the Baron.",
     "Give help to the poor.",
@@ -461,9 +511,10 @@ exploration_encounters.add(Encounter(
     loose several small, dog sized fleshy bodies, armed with two legs and a sharp tail. Prior research helps you tell
     they're riftlings, which are otherworldy creatures from R'lyeh. You attempt to turn the airship around, but the 
     winds are not in your favor, and your engine fails to overcome the strength of the storm. Meanwhile, several
-    riftlings fling themselves onto the deck of your airship and begin to cause panic. What should you do? 
+    riftlings fling themselves onto the deck of your airship and begin to cause panic. You're about to directly collide
+    with the vortex, and you only have enough time to either steer away, or deal with the riftlings. What should you do? 
     ''',
-    "Steer the airship away from colliding with the vortex.",
+    "Swerve the airship away from colliding with the vortex.",
     "Fight the riftlings on board.",
     '''
     From your flight cabin, you can hear horrible screams from the deck. You work to steer the airship away from the
@@ -505,9 +556,10 @@ exploration_encounters.add(Encounter(
     land safely on the volcano. You'll have to land nearby and make a 11km trek on a well established path. 
     Alternatively you've heard of a cavern that shortens the trip to a mere 2km because it goes straight towards the 
     volcano. Both have been traveled previously by porters, however seasonal fluctuations in volcanic activity make it 
-    hard to tell which is safer, especially when it comes to the cavern. Additionally, recent activity by The Maw has 
-    stirred above ground activity in the abominations and failed creations outcast by the Orson lab technicians, 
-    resulting in reports of ambushes by these creatures. Which path do you choose? 
+    hard to tell which is safer, especially when it comes to the cavern, because lava can quickly flood the cavern,
+    trapping travelers inside. Additionally, recent activity by The Maw has stirred above ground activity in the 
+    abominations and failed creations outcast by the Orson lab technicians, resulting in reports of ambushes by these 
+    creatures. Which path do you choose? 
     ''',
     "11km path on the outside of the volcano.",
     "2km path on the inside of the volcano.",
@@ -570,33 +622,17 @@ exploration_encounters.add(Encounter(
 ))
 
 
-# Pre: Given a list of strings that represent a choice the player can make,
-# Post: Returns an integer representing the choice the player picked.
-def pick_choice(choices):
-    for x in choices:
-        print(str(choices.index(x)+1) + ": " + x)
-    while True:
-        decision = None
-        try:
-            decision = int(input("ENTER 1-" + str(len(choices)) + ": "))
-        except ValueError or decision not in range(1, len(choices)+1):
-            print("That isn't an option.")
-            continue
-        if decision in range(1, len(choices)+1):
-            return decision
-
-
 # Pre: Given a player,
 # Post: Will deliver the player through the content regarding the end of the game, and return an integer for the given
 # player's final score at the end of the game.
 def encounter_maw(player):
-    bonus = 0
-    choice2 = maw_phase2(player, maw_phase1())
-    if choice2 is 1:
+    choice1 = maw_phase1()
+    choice2 = maw_phase2(player, choice1)
+    if choice1 is 1:
         bonus = maw_phase3a(player, choice2)
     else:
         bonus = maw_phase3b(player, choice2)
-    return player.calc_score(bonus)
+    return bonus
 
 
 # Post: Will return an integer that represents the player's choice in phase 1.
@@ -644,8 +680,8 @@ def maw_phase2(player, choice1):
 
 # Pre: Given choice2, which was a decision made to kill the Maw
 # Post: Returns an integer that represents the outcome of the chosen solution.
-def maw_phase3a(player, choice2):
-    if choice2 is 1:
+def maw_phase3a(player, choice):
+    if choice is 1:
         print('''
         You muster your crew to start assembling what might be the largest bomb Lugmere has ever seen. Due to
         strict laws on Flux, such a feat has not been attempted before until now. Everyone heaves in unison as
@@ -677,7 +713,7 @@ def maw_phase3a(player, choice2):
             quickly disappearing just as mysteriously as she appeared. 
             ''')
             return maw_effort_failure()
-    elif choice2 is 2:
+    elif choice is 2:
         print('''
         You quickly move your airship to the viewing deck for the clamp. You organize your crew to transport the Flux
         into the main generator for the clamp. Everyone heaves in unison as they pass pieces of Flux to one another.
@@ -745,8 +781,8 @@ def maw_phase3a(player, choice2):
 # Pre: Given choice2, which was a decision made to seal the Maw
 # Post: Returns an integer that represents a bonus to be added to the player's score for the chosen solution. Some
 # solutions lead to an additional sanity event as a last ditch effort to defeat the maw.
-def maw_phase3b(player, choice2):
-    if choice2 is 1:
+def maw_phase3b(player, choice):
+    if choice is 1:
         print('''
         Desperate times call for desperate measures. There is no easy way to say it, so you decide to be blunt.
         You round up all your naive crew members on the upper main deck, and tell them that they are going to be 
@@ -780,7 +816,7 @@ def maw_phase3b(player, choice2):
             cries while she thrashes about in the prison. 
             ''')
             return maw_sanity_failure()
-    elif choice2 is 2:
+    elif choice is 2:
         print('''
         You and your crew drift closer to the viewing deck for The Maw's prison. You gaze across the clouds to see a
         giant claw digging into the body of the beast, clenching it in place, albeit for not much longer. You can hear

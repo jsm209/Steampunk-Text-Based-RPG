@@ -17,9 +17,10 @@ class Player:
         self.MAX_HULL = 10
         self.MAX_SANITY = 100
 
-        self.resources = [300, 15, 1, 10, 100, 1, 0]
+        self.resources = [300, 15, 1, self.MAX_HULL, self.MAX_SANITY, 1, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
         self.name = ""
+        self.score = self.calc_score()
         # Resources: Credits, Food, Fuel, Hull, Stress, Crew, Wisdom
 
     # Post: Returns the player's name as a String.
@@ -133,7 +134,7 @@ class Player:
         and drug dealings in order to take advantage of their services for yourself.
         ''')
         self.add([-10*(self.resources[5]+1), d.hidden_roll(6) + self.resources[5]*d.hidden_roll(2), 0, d.hidden_roll(4),
-                  2*d.hidden_roll(10), d.hidden_roll(4), 0])
+                  2*d.hidden_roll(10), 0, 0])
 
     # Pre: Given a dice object in order to roll different sided dice,
     # Post: Presents dialogue to the player and gives the player resources depending on the outcome of dice rolls.
@@ -143,11 +144,19 @@ class Player:
         ''')
         self.add([d.hidden_roll(10) + d.hidden_roll(14) * self.resources[5], 0, 0, 0, 0, 0, 0])
 
+    # Pre: Given a dice object in order to roll different sided dice,
+    # Post: Presents dialogue to the player and gives the player resources depending on the outcome of dice rolls.
+    def recruit(self, d):
+        print('''
+        You recruit a handful of courageous young men and women.
+        ''')
+        self.add([0, 0, 0, 0, 0, d.hidden_roll(10), 0])
+
     # Post: Will update the player's resources
     def update(self):
         hunger = self.resources[5]+1
         if self.resources[1] - hunger < 0:
-            print("You are starving. Some crew members perish and it worries you.")
+            print("You are starving. Some crew members perish and it worries you. You lose a bit of sanity.")
             self.add([0, 0, 0, 0, 5*(self.resources[1] - hunger), -hunger, 0])
         else:
             print("You feed your party " + str(hunger) + " " + self.resource_names[1] + ".")
@@ -156,8 +165,8 @@ class Player:
     # Pre: Given an optional parameter of an int that represents a bonus to be added to the player's score,
     # Post: Returns an integer that is the result of all player's resources added up in a specific way. Everything but
     # credits and sanity are multiplied by 10 and added. Credits are added without a multiplier. Sanity is subtracted
-    # because having more sanity is better. Lastly, a bonus can be added before returning the final score.
-    def calc_score(self, bonus=0):
+    # because having more sanity is better. The total is returned as an integer.
+    def calc_score(self):
         total = 0
         index = 0
         for x in self.resources:
@@ -168,7 +177,7 @@ class Player:
             else:
                 total += self.resources[index] * 10
             index += 1
-        return total + bonus
+        return total
 
 
             
