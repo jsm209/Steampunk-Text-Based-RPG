@@ -30,13 +30,15 @@ class Player:
     # Post: For each resource, outputs the name of the resource and the amount of the resource.
     # One special case is reporting stress, which is meant to be ambiguous, therefore lacking a clear value.
     def get_count(self):
-        print("### RESOURCES & STATS ### ")
+        print("---RESOURCES---")
         for x in range(0, 7):
+            print()
             if x == 4:
                 print(self.resource_names[x] + ": " + self.stress_status())
             else:
                 print(self.resource_names[x] + ": " + str(self.resources[x]))
-        print("#########################")
+                if x is not 0:
+                    print("+"*self.resources[x])
 
     # Post: Check the player's stress, and returns a value of type String, which is a purposely ambiguous description.
     def stress_status(self):
@@ -69,7 +71,7 @@ class Player:
                               + self.resource_names[x] + " because you reached the maximum of " + str(self.MAX_SANITY))
                         self.resources[x] = self.MAX_SANITY
                 elif other[x] < 0:
-                    if (other[x] + self.resources[x]) <= 0:
+                    if (other[x] + self.resources[x]) <= 0 and x is not 0:
                         print("You have no more " + self.resource_names[x] + " to lose.")
                         self.resources[x] = 0
                     else:
@@ -149,15 +151,17 @@ class Player:
     def recruit(self, d):
         print('''
         You recruit a handful of courageous young men and women.
+        Some members bring new information about The Maw.
         ''')
-        self.add([0, 0, 0, 0, 0, d.hidden_roll(10), 0])
+        self.add([0, 0, 0, 0, 0, d.hidden_roll(10), 1+d.hidden_roll(2)])
 
     # Post: Will update the player's resources
     def update(self):
-        hunger = self.resources[5]+1
-        if self.resources[1] - hunger < 0:
-            print("You are starving. Some crew members perish and it worries you. You lose a bit of sanity.")
-            self.add([0, 0, 0, 0, 5*(self.resources[1] - hunger), -hunger, 0])
+        hunger = self.resources[5]+1  # Crew + yourself
+        difference = self.resources[1] - hunger
+        if difference < 0:
+            print("You are starving." + str(-difference) + " crew members perish and it stresses you.")
+            self.add([0, 0, 0, 0, 5*difference, -difference, 0])
         else:
             print("You feed your party " + str(hunger) + " " + self.resource_names[1] + ".")
             self.add([0, -hunger, 0, 0, 0, 0, 0])

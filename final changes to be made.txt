@@ -19,3 +19,30 @@ make sure final scores displays everyone's scores even if they're disabled
 ---
 
 recruiting possibly increases wisdom because someone can bring information with them
+
+mention that research and exploration can also gain random resources, or lose random resources
+
+explicitly say each turn is one day
+
+give people a random title
+
+fix lore about the maw being immune to flux
+
+explicitly mention you will spend 13 days to muster the strength to find a solution. the end goal
+
+instead of instantly dying from starvation, crew members have a 1/3 chance to stay vs. 2/3 deserting/dying. also say how many leave
+
+make mind meld make sense
+
+delete fourth option from maw encounters
+
+reword release to loosen grip in maw encounter
+
+score does not compute correctly
+food is going missing
+people are dying. help them.
+hektor, kill yourself
+
+New Idea: Combine research and exploration encounters, under one common label as "Encounter"
+and instead replace research with a way to change the doom counter. "Tamper" will let you
+either sacrifice 5 crew to push doom back 2 turns, or sacrifice 5 flux to push it forward two turns.
