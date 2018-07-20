@@ -51,8 +51,8 @@ def opening_story():
     "The Mawful", a local cult who worships the being. They derive their will from this being, making the cult's 
     insignia of a headless body ever more appropriate.
     
-    The cult has since been banished to the underbelly of the metropolis, where they worship the being in secret. 
-    Known as "The Maw", she sits underneath the entirety of Lugmere, lurking below the collection of floating isles, 
+    The cult has since been banished to the undercity of the metropolis, where they worship the being in secret. 
+    Known as "The Maw", she sits underneath the entirety of Lugmere, lurking below the center of the capital, 
     waiting for her chance to swallow up poor souls who drift or fall too close. Her exact size is unknown, but 
     it is known that compared to her gargantuan size, Lugmere is but the tip of a pin. The origins of the beast remain 
     unknown as well, as she recently arrived 223 years ago. Researchers and professors of Lugmere's most prestigious
