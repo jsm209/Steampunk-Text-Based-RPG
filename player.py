@@ -17,7 +17,7 @@ class Player:
         self.MAX_HULL = 10
         self.MAX_SANITY = 100
 
-        self.resources = [-300, 15, 1, self.MAX_HULL, self.MAX_SANITY, 1, 0]
+        self.resources = [300, 15, 1, self.MAX_HULL, self.MAX_SANITY, 1, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
         self.name = ""
         self.score = self.calc_score()
