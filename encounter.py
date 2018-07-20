@@ -1,4 +1,5 @@
 from dice import *
+import time
 
 # Encounter lets you create encounters with a description, question, choice1, choice2, mod, and rating.
 # An Encounter will reward the player if their check passes the rating.
@@ -39,6 +40,9 @@ class Encounter:
     # the mod will be applied to, and choice2 represents the decision without the mod,
     # Post: Will construct an Encounter with that data, that has no rewards or punishments, no win or loss text,
     # and a mod and rating value of 0.
+
+    # Pre: Given a string of text
+    # Post: Will split into lines and print each line out one at a time, waiting the specified time between lines.
     def __init__(self, description, choice1, choice2, win, reward, lose, punish, mod, rating):
         self.description = description
         self.choice1 = choice1
@@ -54,19 +58,26 @@ class Encounter:
         return 'New Encounter\nDescription=%s\nWin=%s\n%s\nLose=%s\n%s\nMod=%s\nRating=%s' \
         % (self.description, self.win, self.reward, self.lose, self.punish, self.mod, self.rating)
 
+    # Pre: Given a string of text
+    # Post: Will split into lines and print each line out one at a time, waiting the specified time between lines.
+    def print_slow(self, str=""):
+        for line in str.splitlines():
+            print(line)
+            time.sleep(0.3)
+
     # Post: Will return a list of the the values of resources that was the outcome of the encounter.
     def get_outcome(self):
-        print(self.description)
+        self.print_slow(self.description)
         choice = self.decision()
         d = Dice()
         check = d.roll(20)
         if choice == 1:
             check += self.mod
         if check >= self.rating:
-            print(self.win)
+            self.print_slow(self.win)
             return self.reward
         else:
-            print(self.lose)
+            self.print_slow(self.lose)
             return self.punish
 
     # Post: Uses the encounter's choice1 and choice2 instance attributes to ask a question, returning 1 for choosing

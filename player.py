@@ -17,7 +17,7 @@ class Player:
         self.MAX_HULL = 10
         self.MAX_SANITY = 100
 
-        self.resources = [300, 15, 1, self.MAX_HULL, self.MAX_SANITY, 1, 0]
+        self.resources = [-300, 15, 1, self.MAX_HULL, self.MAX_SANITY, 1, 0]
         self.resource_names = ["CREDITS", "FOOD", "FLUX", "HULL", "SANITY", "CREW", "WISDOM"]
         self.name = ""
         self.score = self.calc_score()
@@ -30,15 +30,18 @@ class Player:
     # Post: For each resource, outputs the name of the resource and the amount of the resource.
     # One special case is reporting stress, which is meant to be ambiguous, therefore lacking a clear value.
     def get_count(self):
-        print("---RESOURCES---")
+        print()
+        print("###RESOURCES###")
         for x in range(0, 7):
             print()
             if x == 4:
                 print(self.resource_names[x] + ": " + self.stress_status())
+            elif x is not 0:
+                print(self.resource_names[x] + ": " + "O"*self.resources[x] + "(" + str(self.resources[x]) + ")")
             else:
                 print(self.resource_names[x] + ": " + str(self.resources[x]))
-                if x is not 0:
-                    print("+"*self.resources[x])
+        print("###############")
+        print()
 
     # Post: Check the player's stress, and returns a value of type String, which is a purposely ambiguous description.
     def stress_status(self):
@@ -144,7 +147,7 @@ class Player:
         print('''
         You work a random odd job.
         ''')
-        self.add([d.hidden_roll(10) + d.hidden_roll(14) * self.resources[5], 0, 0, 0, 0, 0, 0])
+        self.add([10 * d.hidden_roll(14) * self.resources[5], 0, 0, 0, 0, 0, 0])
 
     # Pre: Given a dice object in order to roll different sided dice,
     # Post: Presents dialogue to the player and gives the player resources depending on the outcome of dice rolls.

@@ -3,8 +3,7 @@ from encounterGroup import *
 from player import *
 from name import *
 import time
-import sys
-from random import randrange
+
 
 # A "game" organizes the necessary processes to play a game of Lugmere's Loss. It can process turns, and increment the
 # total amount of turns.
@@ -14,14 +13,34 @@ from random import randrange
 #############
 STARTING_DOOM = 13
 current_tamper = 0
+TEXT_SPEED = 0.3
 
 d = Dice()  # A dice to share with all the game mechanics.
 n = Name()  # A name generate to share with all the writing.
 
+
+# Pre: Given a string of text
+# Post: Will split into lines and print each line out one at a time, waiting the specified time between lines.
+def print_slow(str=""):
+    for line in str.splitlines():
+        print(line)
+        time.sleep(TEXT_SPEED)
+
+#    for letter in str:
+#        sys.stdout.write(letter)
+#        sys.stdout.flush()
+#        time.sleep(TEXT_SPEED)
+
+
+# Post: Waits for user to press ENTER.
+def press_enter():
+    input("[PRESS ENTER TO PROCEED]")
+
+
 # Post: Presents an introduction
 def opening_story():
     text_box("The Story So far...")
-    print('''
+    print_slow('''
     Welcome to the Metropolis of Lugmere, a flying mechanical collection of floating isles, housing a population plagued 
     by rampant pollution and tense historical turmoil. Lugmere lives on its alien power source found at the center of 
     the capital, and trade economy ran by airships. Airships of all sizes and craft drift by the balconies of the 
@@ -70,13 +89,15 @@ def opening_story():
     It is up to you to find a way to save Lugmere.
     
     ''')
+    press_enter()
+    print()
     help()
 
 
 # Post: Prints out text that explains the premise of a regular turn.
 def help():
     text_box("TAKING TURNS")
-    print('''
+    print_slow('''
     LUGMERE STARTS WITH A DOOM COUNTER OF 13. THE PLAYERS ENCOUNTER THE MAW WHEN THIS IS REDUCED TO 0.
     EACH TURN THE DOOM COUNTER TICKS DOWN BY 1.
         
@@ -97,14 +118,15 @@ def help():
         Recruit - Consumes 50 credits to set up campaign. Gains crew members. Gaining crew this way gives wisdom.
         
         Tamper - Tampers with the doom counter. Can push it back 2 turns by sacrificing 5 crew members, or push it 
-        forward 2 turns by spending 5 Flux.
+        forward 2 turns by spending 5 Flux. All players are saving their own version of Lugmere, but everyone shares
+        a Doom counter amongst each other.
         
         Explore - Consumes 1 Flux (fuel) and requires 1 Crew. Gives you a random encounter to possibly gain wisdom.
         Can gain or lose all types of resources, depending on your decisions.
     
     AT THE END OF THE GAME, EACH PLAYER'S SCORE IS CALCULATED. PLAYERS WHO RESOLVE THE MAW CONFLICT WILL GAIN A BONUS.
     ''')
-    input("[PRESS ENTER TO PROCEED]")
+    press_enter()
 
 
 # Pre: Given a string,
@@ -115,7 +137,6 @@ def text_box(text):
     print("#" * len(string))
     print(string)
     print("#" * len(string))
-    print()
 
 
 # Pre: Given an integer that represents the current turn,
@@ -143,26 +164,27 @@ def game_handler(doom):
         for player in players_normal:
             if has_lost(player) is False:
                 doom += process_turn(player)
+                press_enter()
                 player.update()
 
             # Currently insane condition
             elif player in players_insane:
-                print(player.get_name() + " is currently insane. They try to snap out of it.")
+                print_slow(player.get_name() + " is currently insane. They try to snap out of it.")
                 if d.roll(20) >= 15:
-                    print(player.get_name() + " has sucessfully come to their senses!")
+                    print_slow(player.get_name() + " has sucessfully come to their senses!")
                     player.resources[4] = 50
                     players_insane.remove(player)
                 else:
-                    print(player.get_name() + " remains delusional...")
+                    print_slow(player.get_name() + " remains delusional...")
             else:
 
                 # First time disabled
                 if player.resources[4] == 0:
                     loss_by_sanity()
-                    print(player.get_name() + " has gone insane...")
+                    print_slow(player.get_name() + " has gone insane...")
                     players_insane.append(player)
                 else:
-                    print(player.get_name() + " has to spend a day repairing their broken airship.")
+                    print_slow(player.get_name() + " has to spend a day repairing their broken airship.")
                     player.add([0, 0, 0, 2, 0, 0, 0])
         doom -= 1
 
@@ -174,7 +196,7 @@ def game_handler(doom):
     text_box("FINAL SCORES")
     i = 0
     while i < len(players_normal):
-        print(players_normal[i].get_name() + "'s SCORE IS: " + str(players_normal[i].score))
+        print_slow(players_normal[i].get_name() + "'s SCORE IS: " + str(players_normal[i].score))
         i += 1
 
 
@@ -185,12 +207,12 @@ def game_handler(doom):
 # to be added to the doom counter.
 def process_turn(player):
     text_box(player.get_name() + ", you have: ")
-    print()
+    print_slow()
     player.get_count()
-    print()
+    print_slow()
     if player.resources[0] < 0:
-        print(player.get_name() + " is in debt!")
-    print()
+        print_slow(player.get_name() + " is in debt!")
+    print_slow()
     print("How do you spend your day?")
     choice = pick_choice(["Mine", "Dock [Requires 10 credits per crew member, including yourself]", "Recruit", "Work",
                           "Tamper [Minimum 5 Flux and 5 Crew]", "Encounter [Minimum 1 Flux and 1 Crew]", "HELP"])
@@ -203,7 +225,7 @@ def process_turn(player):
         player.recruit(d)
     elif choice == 4:
         player.work(d)
-    elif choice == 5 and player.resources[5] >= 5 or player.resources[2] >= 5:
+    elif choice == 5 and (player.resources[5] >= 5 or player.resources[2] >= 5):
         doom_mod += tamper(player, 2)
     elif choice == 6 and player.resources[5] > 0 and player.resources[2] > 0:
         player.resources[2] -= 1
@@ -213,8 +235,7 @@ def process_turn(player):
         help()
         process_turn(player)
     else:
-        print("You don't have the resources to do that. Please select another course of action.")
-        print("You figure exploration and research both need at least one crew member and one Flux stone.")
+        print_slow("You don't have the resources to do that. Please select another course of action.")
         process_turn(player)
     return doom_mod
 
@@ -238,16 +259,18 @@ def pick_choice(choices):
 # Pre: Given a player object and an integer that represents the degree of tampering/how much to impact the doom counter
 # Post: Returns the degree as an integer to be added to the doom counter.
 def tamper(player, degree):
-    print('''
+    print_slow('''
     You decide to tamper with Lugmere's impending doom. What do you feel like doing?
     ''')
     choice = pick_choice(["Sacrifice 5 crew to The Maw [Pushes Doom Back]",
                           "Overload 5 Flux to the clamp on The Maw [Brings Doom Closer]"])
     if choice is 1:
-        print("You sacrifice some crew members, and The Maw seems to calm down a little bit.")
+        print_slow("You sacrifice some crew members, and The Maw seems to calm down a little bit.")
+        player.add([0, 0, 0, 0, 0, -5, 0])
         return degree
     else:
-        print("You overload the claw on The Maw, and she becomes agitated, struggling even more.")
+        print_slow("You overload the claw on The Maw, and she becomes agitated, struggling even more.")
+        player.add([0, 0, -5, 0, 0, 0, 0])
         return -degree
 
 
@@ -618,7 +641,7 @@ def encounter_maw(player):
 
 # Post: Will return an integer that represents the player's choice in phase 1.
 def maw_phase1():
-    print('''
+    print_slow('''
     The clouds below Lugmere are swirling more violently as The Maw shakes and rattles the entire district. After
     traveling across the land for what seems like an eternity, you finally make your way back to the capital. As you
     approach the floating prison in the middle of the city, you realize you have a choice to make. How should you 
@@ -626,7 +649,7 @@ def maw_phase1():
     ''')
     choice1 = pick_choice(["Attempt to kill The Maw.",
                            "Attempt to seal The Maw."])
-    print('''
+    print_slow('''
     You drift closer to the gaping hole that forms beneath Lugmere. The Maw's stench of rotten flesh and dried blood
     fills your nose. You realize that you would rather take in Lugmere's musky smog than this scent. As you get
     closer, you can hear the hoarse breathing of The Maw. Her struggle and mere presence strikes fear into
@@ -640,7 +663,7 @@ def maw_phase1():
 def maw_phase2(player, choice1):
     player.add([0, 0, 0, 0, -d.hidden_roll(10), 0, 0])
     if choice1 == 1:
-        print('''
+        print_slow('''
         A few ideas cross your mind. You can use the rest of your Flux and make a highly destructive bomb, capable of
         leveling even Lugmere if you have enough Flux, and drop it into The Maw's mouth. Or you can use the Flux to
         overload the claw clamping on The Maw and have it slice The Maw in two. Lastly, you can use your crew and 
@@ -648,7 +671,7 @@ def maw_phase2(player, choice1):
         ''')
         choice2 = pick_choice(["Use a bomb.", "Overload the clamp.", "Organize an assault."])
     else:
-        print('''
+        print_slow('''
         A few ideas cross your mind. You can use the collective conscience of your party's mind to assert dominance
         by melding with The Maw. Or you can make a precise sacrifice to The Maw, hoping to sate her hunger. Lastly, you 
         can release The Maw from the prison, hoping it will subdue herself, given the poor conditions of her captivity. 
@@ -662,7 +685,7 @@ def maw_phase2(player, choice1):
 # Post: Returns an integer that represents the outcome of the chosen solution.
 def maw_phase3a(player, choice):
     if choice is 1:
-        print('''
+        print_slow('''
         You muster your crew to start assembling what might be the largest bomb Lugmere has ever seen. Due to
         strict laws on Flux, such a feat has not been attempted before until now. Everyone heaves in unison as
         they lug all the Flux on board into a pile. You carefully arrange and secure them in a bundle, and
@@ -674,7 +697,7 @@ def maw_phase3a(player, choice):
         d.fake_roll(14)
         player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
         if player.resources[2] >= 30:
-            print('''
+            print_slow('''
             Shortly after, you hear the thunderous boom of the bomb, and your airship is thrust upwards by the 
             updraft! An ear piercing cry rings out, striking fear into everyone in Lugmere. Then silence. 
             An uncomfortable silence falls over the district; no more ambient growling or drafts from what used 
@@ -684,7 +707,7 @@ def maw_phase3a(player, choice):
             ''')
             return 2500
         else:
-            print('''
+            print_slow('''
             Shortly after, you hear a boom, which jolts your airship slightly. Everyone peers over the side to check
             the damage. You hear silence, then suddenly, The Maw lets out a thunderous roar... The bomb failed.   
             You tried your hardest but it's in vain. The Maw appears to have resisted your efforts just enough and 
@@ -694,14 +717,14 @@ def maw_phase3a(player, choice):
             ''')
             return maw_effort_failure()
     elif choice is 2:
-        print('''
+        print_slow('''
         You quickly move your airship to the viewing deck for the clamp. You organize your crew to transport the Flux
         into the main generator for the clamp. Everyone heaves in unison as they pass pieces of Flux to one another.
         ''')
         d.fake_roll(14)
         player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
         if player.resources[2] >= 30 or (player.resources[2] >= 20 and player.resources[5] >= 20):
-            print('''
+            print_slow('''
             You stuff the generator with an unprecedented amount of Flux, so dangerously packed that it could explode
             any minute and level the entirety of Lugmere. Not knowing if the generator can even process such a large
             amount, you rush up to the main control room, where you can get a good view of the prison clamping down
@@ -719,7 +742,7 @@ def maw_phase3a(player, choice):
             ''')
             return 2500
         else:
-            print('''
+            print_slow('''
             You stuff the generator with as much Flux as you have. Not knowing if the generator can even process such an
             amount, you rush up to the main control room, where you can get a good view of the prison clamping down
             on The Maw. The claws dig into The Maw's flesh, preventing it from escaping, but also causes immense
@@ -735,7 +758,7 @@ def maw_phase3a(player, choice):
             ''')
             return maw_effort_failure()
     else:
-        print('''
+        print_slow('''
         You trust your crew. You've been through the toughest and worst of times, some even sticking with you now.
         You're amazed that none of them have cowered in fear and fled, tail between their legs, rather deciding to help
         Lugmere and stop The Maw. "These men and women will make great soldiers" you tell yourself, and decide to lead
@@ -744,7 +767,7 @@ def maw_phase3a(player, choice):
         descend below the undercity of Lugmere, and enter the storm brewing below...
         ''')
         d.fake_roll(0, 5)
-        print('''
+        print_slow('''
         A sea of snake like arms surround your army, forming walls that prevent your escape. You realize that you've
         underestimated the sheer size and power of The Maw, as she closes her grip around you. You command your army to
         begin firing the cannons, and they let loose a volley of volatile Flux projectiles, which seem to only be
@@ -763,7 +786,7 @@ def maw_phase3a(player, choice):
 # solutions lead to an additional sanity event as a last ditch effort to defeat the maw.
 def maw_phase3b(player, choice):
     if choice is 1:
-        print('''
+        print_slow('''
         Desperate times call for desperate measures. There is no easy way to say it, so you decide to be blunt.
         You round up all your naive crew members on the upper main deck, and tell them that they are going to be 
         sacrificed to The Maw. The majority of them are surprisingly willing to sacrifice themselves for Lugmere, 
@@ -778,7 +801,7 @@ def maw_phase3b(player, choice):
         ''')
         d.fake_roll(10)
         if player.resources[5] >= 30:
-            print('''
+            print_slow('''
             As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
             silence. You ponder your decision, and know that you will live in grief forever for what you just did. 
             Suddenly however, The Maw stops struggling. It simply stops resisting the prison, and sits content, almost 
@@ -789,7 +812,7 @@ def maw_phase3b(player, choice):
             ''')
             return 2500
         else:
-            print('''
+            print_slow('''
             As you watch the last crew member plummet to their doom, you fly to a safe distance and wait in
             silence. You ponder your decision, and know that you will live in grief forever for what you just did. You
             realize you've been pondering for a while, and nothing has changed. The Maw still lets out irritating
@@ -797,13 +820,13 @@ def maw_phase3b(player, choice):
             ''')
             return maw_sanity_failure()
     elif choice is 2:
-        print('''
+        print_slow('''
         You and your crew drift closer to the viewing deck for The Maw's prison. You gaze across the clouds to see a
         giant claw digging into the body of the beast, clenching it in place, albeit for not much longer. You can hear
         the creaking of the metal as it begins to weaken, so time is of the essence. You land and walk across the deck
         of the viewing platform until you and your crew are face first with the surface of The Maw. You take a look.''')
         d.fake_roll(14)
-        print('''
+        print_slow('''
         A closer inspection of the hairs that line the beast reveal that they are actually small suction cups held to 
         her body by strings of flesh. They appear to be human sized, and look like all sorts of types, from sharp, razor
         teeth linings, to beautiful flower like flaps that ooze nectar. A nearby Maw prison station manager explains
@@ -814,20 +837,20 @@ def maw_phase3b(player, choice):
         mental fortitude of your crew, as you have been together through a lot. Everyone fearfully dons the helmets and 
         are whisked away in mind and spirit into The Maw.
         ''')
-        print('''
+        print_slow('''
         You find yourself worrying. You are lost in your thoughts, and can picture yourself, but from a perspective
         outside of your body. You see yourself with your crew standing at the skin of the creature. Flashes of light
         cloud your vision, and you feel like you're being squished.
         ''')
         d.fake_roll(17)
-        print('''
+        print_slow('''
         You sucessfully resist the pressure, pushing back with a force much greater. You can hear the thoughts of
         all your crew members, as they cheer and egg each other on. You push harder, not physically, but just
         enough to resist the pull of The Maw. 
         ''')
         if player.resources[5] >= 20 and player.resources[6] >= 10:
             d.fake_roll(12)
-            print('''
+            print_slow('''
             You can feel The Maw weakening. It seems that her endurance is waning, and you and your crew take this as
             a chance to push her out. You feel your souls climb higher and higher into her mind as you soar past
             vivid colors and sights of gore. Entering her mind is both scary but encouraging, and you're one step closer
@@ -848,7 +871,7 @@ def maw_phase3b(player, choice):
             return 2500
         else:
             d.fake_roll(0, 4)
-            print('''
+            print_slow('''
             Suddenly, her power increases. Out of what seems like nowhere, she thrusts you and your crew's mental states
             into hell. Violence and horror are all that fill your minds, and you quickly become scared. So scared in 
             fact that you can't bear her terrible mindscape any longer, and you wish to escape. You feel your 
@@ -858,7 +881,7 @@ def maw_phase3b(player, choice):
             ''')
             return maw_sanity_failure()
     else:
-        print('''
+        print_slow('''
         You see that The Maw is in a lot of pain. You wonder, just maybe, if by releasing The Maw from her pain that
         she would be subdued in that manner. You drift your airship down to the station that manages The Maw's clamp.
         As you approach the main control room, a technician stops you. His gruff demeanor and stature tells you he is
@@ -866,14 +889,14 @@ def maw_phase3b(player, choice):
         so you'll have to persuade him to pass.
         ''')
         d.fake_roll(17)
-        print('''
+        print_slow('''
         You tell him that have a plan to stop The Maw and that you need access to the main dashboard. He barely seems
         satisfied, but lets you through. You and some crew members walk into the room, and realize that it is flooded
         with technicians. You'll need to remove them all if you're to release The Maw, since they are most likely going
         to hinder and arrest you in the process.
         ''')
         d.fake_roll(16)
-        print('''
+        print_slow('''
         You and your crew carefully arrange yourself in the room around the busy technicians. Simultaneously your crew 
         dispatches them all at once, while you quickly seal the door! You can hear pounding on the outside, and alarms
         blaring. The gruff technician from earlier is screaming and cursing at you from the other side of the lock!
@@ -889,7 +912,7 @@ def maw_phase3b(player, choice):
 
 
 def maw_effort_failure():
-    print('''
+    print_slow('''
     From this day on, Lugmere will remain in a state of decay. When The Maw left, she took Lugmere's electricity with 
     her. Many power generators will revert back to using Flux, which is slowly but surely becoming more and more scarce. 
     Because this non renewable resources holds up the islands, it won't be long before war breaks out in Lugmere, as 
@@ -905,7 +928,7 @@ def maw_effort_failure():
 
 
 def maw_sanity_failure():
-    print('''
+    print_slow('''
     You grieve for Lugmere. The sheer power of The Maw has gotten into your mind and is messing with your thoughts. You
     collapse into a state of isolation, and feel the need to do nothing. You no longer care about this world, or the
     next, and no longer worry about Lugmere. But this isn't a state of peace, but rather a state of longing. You long
@@ -917,7 +940,7 @@ def maw_sanity_failure():
 
 
 def loss_by_sanity():
-    print('''
+    print_slow('''
     You can't take it anymore. Your head pulses with all the horrors of R'yleh, and you feel like there are 
     things you are not supposed to know. You wake up in the morning in a daze. Doctors don't know what's wrong with you. 
     People say you repeat phrases like "it's hopeless" or "she's won", little snippets that have caused your closest 
