@@ -138,7 +138,7 @@ class Player:
         facility. You take in the shanties of the pub and turn a blind eye to the prostitution
         and drug dealings in order to take advantage of their services for yourself.
         ''')
-        self.add([-10*(self.resources[5]+1), d.hidden_roll(6) + self.resources[5]*d.hidden_roll(2), 0, d.hidden_roll(4),
+        self.add([-10*(self.resources[5]+1), d.hidden_roll(10) + self.resources[5]*d.hidden_roll(2), 0, d.hidden_roll(4),
                   2*d.hidden_roll(10), 0, 0])
 
     # Pre: Given a dice object in order to roll different sided dice,
@@ -156,7 +156,7 @@ class Player:
         You recruit a handful of courageous young men and women.
         Some members bring new information about The Maw.
         ''')
-        self.add([0, 0, 0, 0, 0, d.hidden_roll(10), 1+d.hidden_roll(2)])
+        self.add([-50, 0, 0, 0, 0, d.hidden_roll(10), 1+d.hidden_roll(2)])
 
     # Post: Will update the player's resources
     def update(self):

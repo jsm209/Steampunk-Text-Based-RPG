@@ -227,7 +227,7 @@ def process_turn(player):
         player.mine(d)
     elif choice == 2 and player.resources[0] >= 10*(player.resources[5]+1):
         player.dock(d)
-    elif choice == 3:
+    elif choice == 3 and player.resources[0] >= 50:
         player.recruit(d)
     elif choice == 4:
         player.work(d)
