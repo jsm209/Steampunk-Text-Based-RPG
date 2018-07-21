@@ -8,7 +8,7 @@ class Name:
         self.suffix = ["Cryptographer", "Professor", "Analog", "Foreman", "Pirate", "Councilor", "Priest", "Assassin",
                        "Mechanic", "Doctor", "Miner", "Spy", "Banker", "Mortician", "Caretaker", "Foolish", "Baron",
                        "Chancellor", "Inventor", "Scientist", "Cultist", "Ambidextrous", "Ambitious", "Liar", "Thief",
-                       "Murderer", "Gravedigger", "Aviator", "Hunter", "Soldier", "Elderly", "Disabled"]
+                       "Murderer", "Gravedigger", "Aviator", "Hunter", "Soldier", "Elderly", "Disabled", "Archaic"]
         self.first_names = ["Bram", "Hugo", "Edison", "Ida", "Agatha", "Ives", "Briar", "Phineas", "Sterling", "Tesla", "Victoria",
                             "Emily", "Edna", "Ellie", "Ruth", "Bess", "Fanny", "Theodore", "Alethea", "Anastasia", "Bertram",
                             "Ambrose", "Pierce", "Percy", "Conrad", "Maximilian", "Alistar"]

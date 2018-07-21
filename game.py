@@ -172,6 +172,7 @@ def game_handler(doom):
                 doom += process_turn(player)
                 press_enter()
                 player.update()
+                press_enter()
 
             # Currently insane condition
             elif player in players_insane:
@@ -199,6 +200,8 @@ def game_handler(doom):
         if has_lost(player) is False:
             text_box(player.get_name() + " encounters The Maw.")
             player.score += encounter_maw(player)
+        else:
+            text_box(player.get_name() + " is disabled and does not encounter The Maw.")
     text_box("FINAL SCORES")
     i = 0
     while i < len(players_normal):
@@ -213,15 +216,17 @@ def game_handler(doom):
 # to be added to the doom counter.
 def process_turn(player):
     text_box(player.get_name() + ", you have: ")
-    print_slow()
+    print()
     player.get_count()
-    print_slow()
+    print()
+    press_enter()
     if player.resources[0] < 0:
         print_slow(player.get_name() + " is in debt!")
     print_slow()
     print("How do you spend your day?")
-    choice = pick_choice(["Mine", "Dock [Requires 10 credits per crew member, including yourself]", "Recruit", "Work",
-                          "Tamper [Minimum 5 Flux and 5 Crew]", "Encounter [Minimum 1 Flux and 1 Crew]", "HELP"])
+    choice = pick_choice(["Mine", "Dock [Costs 10 credits per crew member, including yourself]",
+                          "Recruit [Costs 50 credits]", "Work", "Tamper [Minimum 5 Flux and 5 Crew]",
+                          "Encounter [Minimum 1 Flux and 1 Crew]", "HELP"])
     doom_mod = 0
     if choice == 1:
         player.mine(d)
@@ -270,14 +275,17 @@ def tamper(player, degree):
     ''')
     choice = pick_choice(["Sacrifice 5 crew to The Maw [Pushes Doom Back]",
                           "Overload 5 Flux to the clamp on The Maw [Brings Doom Closer]"])
-    if choice is 1:
+    if choice is 1 and player.resources[5] >= 5:
         print_slow("You sacrifice some crew members, and The Maw seems to calm down a little bit.")
         player.add([0, 0, 0, 0, 0, -5, 0])
         return degree
-    else:
+    elif player.resources[2] >= 5:
         print_slow("You overload the claw on The Maw, and she becomes agitated, struggling even more.")
         player.add([0, 0, -5, 0, 0, 0, 0])
         return -degree
+    else:
+        print_slow("You don't have the resources to do that.")
+        tamper(player, degree)
 
 
 # Pre: Given a player
@@ -629,6 +637,43 @@ exploration_encounters.add(Encounter(
      -1*d.hidden_roll(4), 6],
     -4,
     10
+))
+
+exploration_encounters.add(Encounter(
+    '''
+    While traveling over an island, you encounter a peculiar island. It is one of the few isles in Lugmere that has
+    a secluded beach. You find it peculiar and decide to take a closer look. Upon landing and disembarking, you are
+    greeted by a giant crowd of what appears to be red crabs. They are about the size of an everyday chair, and look
+    like they weigh 40kg. One of the crabs has a pale pinkish hue and is rather buff for a crab- clearly the elder. It
+    scurries up to you and you're shocked when you hear it speak! \"Hello humans. We are delighted by your company. My
+    name is ''' + n.generate_name(False, False) + ''' and we seek your aid. A nearby group of humans have captured some
+    of my brethren, planning to eat them, and this is unacceptable.\". They gesture with their giant claws towards a 
+    nearby valley where you see several Mawful cultists gathered around a fire, slowly roasting a giant screaming crab.
+    You instantly sympathize because the cultists have roasted several humans alive as torture, so seeing one of their
+    own must be very painful for the crabs. There are two plans you and the crabs devise.
+    ''',
+    "Ride the crabs into battle in a giant stampede.",
+    "Hide behind the crabs as they approach, then jump out to surprise the cultists.",
+    '''
+    The red crab elder charges and soon, several other crab soldiers follow in suit! They kick up dust and debris as
+    hundreds of legs scurry down into the valley! The cultists react too late as they're taken by surprise when you
+    are seen accompanying the army. They scramble and fail to find their weapons in time. You make quick work of the 
+    cultists there, and help rescue the captured crabs. As a reward, the elder allows you to ransack the 
+    cultist encampment.
+    ''',
+    [d.hidden_roll(3)*100, d.hidden_roll(10)*3, d.hidden_roll(4), 0, 0, 0, 0],
+    '''
+    The red crab elder charges and soon, several other crab soldiers follow in suit! They kick up dust and debris as
+    hundreds of legs scurry down into the valley! The cultists jump up, weapons already in hand! They grab sticks of
+    flame from the nearby roast, and scare away the crabs! They scuttle away in fear, afraid that they will be roasted
+    as well. You and your crew continue to fight, and eventually deal with the cultists, but unfortunately with heavy
+    losses. While you were distracted fighting the cultists, the crabs freed their brethren and made a quick
+    escape. You're left with carnage all around you as dying cultists and crew members alike line the valley. You try
+    to salvage what is left of the encampment.
+    ''',
+    [d.hidden_roll(100), d.hidden_roll(10), 1, 0, -6*d.hidden_roll(6),-3*d.hidden_roll(4), 2],
+    3,
+    13
 ))
 
 

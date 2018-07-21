@@ -118,7 +118,7 @@ class Player:
             ''')
             bonus -= 1
         print("You end up convincing the foreman to let you use his mine.")
-        changes = [0, -d.hidden_roll(6), (4+bonus), 0, 0, (1+bonus), 0]
+        changes = [0, -d.hidden_roll(6), (4+bonus), 0, 0, (bonus), 0]
         print('''
         The day is spent mining flux. The foreman's miners stare at you as you work, their curious gaze makes you feel 
         slightly nervous. You can hear them whisper about you and The Maw. It seems that word must travel quickly on 
