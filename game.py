@@ -98,7 +98,8 @@ def opening_story():
 def help():
     text_box("TAKING TURNS")
     print_slow('''
-    THE OBJECTIVE OF THE GAME IS TO EARN THE HIGHEST SCORE. AT THE END OF THE GAME, EACH PLAYER'S SCORE IS CALCULATED BASED ON THEIR TOTAL RESOURCES. THE GAME HAS 7 MAIN RESOURCES: 
+    THE OBJECTIVE OF THE GAME IS TO EARN THE HIGHEST SCORE. AT THE END OF THE GAME, EACH PLAYER'S SCORE IS CALCULATED 
+    BASED ON THEIR TOTAL RESOURCES. THE GAME HAS 7 MAIN RESOURCES: 
 
     [Credits, Food, Fuel, Hull, Stress, Crew, Wisdom] 
 
@@ -124,8 +125,8 @@ def help():
         Recruit - Consumes 50 credits to set up campaign. Gains crew members. Gaining crew this way gives wisdom.
         
         Tamper - Tampers with the doom counter. Can push it back 2 turns by sacrificing 5 crew members, or push it 
-        forward 2 turns by spending 5 Flux. All players are saving their own version of Lugmere, but everyone shares
-        a Doom counter amongst each other.
+        forward 2 turns by spending 5 Flux. Will always cost 1 wisdom regardless. All players are saving their own 
+        version of Lugmere, but everyone shares a Doom counter amongst each other.
         
         Explore - Consumes 1 Flux (fuel) and requires 1 Crew. Gives you a random encounter to possibly gain wisdom.
         Can gain or lose all types of resources, depending on your decisions.
@@ -225,7 +226,7 @@ def process_turn(player):
     print_slow()
     print("How do you spend your day?")
     choice = pick_choice(["Mine", "Dock [Costs 10 credits per crew member, including yourself]",
-                          "Recruit [Costs 50 credits]", "Work", "Tamper [Minimum 5 Flux and 5 Crew]",
+                          "Recruit [Costs 50 credits]", "Work", "Tamper [Costs 1 Wisdom, Minimum 5 Flux or 5 Crew]",
                           "Encounter [Minimum 1 Flux and 1 Crew]", "HELP"])
     doom_mod = 0
     if choice == 1:
@@ -236,7 +237,7 @@ def process_turn(player):
         player.recruit(d)
     elif choice == 4:
         player.work(d)
-    elif choice == 5 and (player.resources[5] >= 5 or player.resources[2] >= 5):
+    elif choice == 5 and (player.resources[5] >= 5 or player.resources[2] >= 5) and player.resources[6] >= 1:
         doom_mod += tamper(player, 2)
     elif choice == 6 and player.resources[5] > 0 and player.resources[2] > 0:
         player.resources[2] -= 1
@@ -277,11 +278,11 @@ def tamper(player, degree):
                           "Overload 5 Flux to the clamp on The Maw [Brings Doom Closer]"])
     if choice is 1 and player.resources[5] >= 5:
         print_slow("You sacrifice some crew members, and The Maw seems to calm down a little bit.")
-        player.add([0, 0, 0, 0, 0, -5, 0])
+        player.add([0, 0, 0, 0, 0, -5, -1])
         return degree
     elif player.resources[2] >= 5:
         print_slow("You overload the claw on The Maw, and she becomes agitated, struggling even more.")
-        player.add([0, 0, -5, 0, 0, 0, 0])
+        player.add([0, 0, -5, 0, 0, 0, -1])
         return -degree
     else:
         print_slow("You don't have the resources to do that.")
@@ -643,14 +644,14 @@ exploration_encounters.add(Encounter(
     '''
     While traveling over an island, you encounter a peculiar island. It is one of the few isles in Lugmere that has
     a secluded beach. You find it peculiar and decide to take a closer look. Upon landing and disembarking, you are
-    greeted by a giant crowd of what appears to be red crabs. They are about the size of an everyday chair, and look
-    like they weigh 40kg. One of the crabs has a pale pinkish hue and is rather buff for a crab- clearly the elder. It
-    scurries up to you and you're shocked when you hear it speak! \"Hello humans. We are delighted by your company. My
-    name is ''' + n.generate_name(False, False) + ''' and we seek your aid. A nearby group of humans have captured some
-    of my brethren, planning to eat them, and this is unacceptable.\". They gesture with their giant claws towards a 
-    nearby valley where you see several Mawful cultists gathered around a fire, slowly roasting a giant screaming crab.
-    You instantly sympathize because the cultists have roasted several humans alive as torture, so seeing one of their
-    own must be very painful for the crabs. There are two plans you and the crabs devise.
+    greeted by a giant crowd of what appears to be sentient red crabs. They are about the size of an everyday chair, and 
+    look like they weigh 40kg each. One of the crabs has a pale pinkish hue and is rather buff for a crab- clearly the 
+    elder. It scurries up to you and you're shocked when you hear it speak! \"Hello humans. We are delighted by your 
+    company. My name is ''' + n.generate_name(False, False) + ''' and we seek your aid. A nearby group of humans have 
+    captured some of my brethren, planning to eat them, and this is unacceptable.\". They gesture with their giant claws 
+    towards a nearby valley where you see several Mawful cultists gathered around a fire, slowly roasting a giant 
+    screaming crab. You instantly sympathize because the cultists have roasted several humans alive as torture, so 
+    seeing one of their own must be very painful for the crabs. There are two plans you and the crabs devise.
     ''',
     "Ride the crabs into battle in a giant stampede.",
     "Hide behind the crabs as they approach, then jump out to surprise the cultists.",
@@ -698,8 +699,8 @@ def maw_phase1():
     approach the floating prison in the middle of the city, you realize you have a choice to make. How should you 
     approach saving Lugmere?
     ''')
-    choice1 = pick_choice(["Attempt to kill The Maw.",
-                           "Attempt to seal The Maw."])
+    choice1 = pick_choice(["Attempt to kill The Maw. [CREW AND FLUX]",
+                           "Attempt to seal The Maw. [CREW AND WISDOM]"])
     print_slow('''
     You drift closer to the gaping hole that forms beneath Lugmere. The Maw's stench of rotten flesh and dried blood
     fills your nose. You realize that you would rather take in Lugmere's musky smog than this scent. As you get
@@ -720,7 +721,8 @@ def maw_phase2(player, choice1):
         overload the claw clamping on The Maw and have it slice The Maw in two. Lastly, you can use your crew and 
         form a fleet to assault The Maw herself. How should you proceed?
         ''')
-        choice2 = pick_choice(["Use a bomb.", "Overload the clamp.", "Organize an assault."])
+        choice2 = pick_choice(["Use a bomb. [FLUX]", "Overload the clamp. [FLUX AND OR CREW]",
+                               "Organize an assault. [???]"])
     else:
         print_slow('''
         A few ideas cross your mind. You can use the collective conscience of your party's mind to assert dominance
@@ -728,7 +730,8 @@ def maw_phase2(player, choice1):
         can release The Maw from the prison, hoping it will subdue herself, given the poor conditions of her captivity. 
         How should you proceed? 
         ''')
-        choice2 = pick_choice(["Make a worthy sacrifice.", "Group mind meld.", "Release The Maw."])
+        choice2 = pick_choice(["Make a worthy sacrifice. [CREW]", "Group mind meld. [CREW AND WISDOM]",
+                               "Release The Maw. [???]"])
     return choice2
 
 
@@ -774,7 +777,7 @@ def maw_phase3a(player, choice):
         ''')
         d.fake_roll(14)
         player.add([0, 0, -player.resources[2], 0, 0, 0, 0])
-        if player.resources[2] >= 30 or (player.resources[2] >= 20 and player.resources[5] >= 20):
+        if player.resources[2] >= 30 or (player.resources[2] >= 15 and player.resources[5] >= 15):
             print_slow('''
             You stuff the generator with an unprecedented amount of Flux, so dangerously packed that it could explode
             any minute and level the entirety of Lugmere. Not knowing if the generator can even process such a large

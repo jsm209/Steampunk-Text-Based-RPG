@@ -37,7 +37,7 @@ class Player:
             if x == 4:
                 print(self.resource_names[x] + ": " + self.stress_status())
             elif x is not 0:
-                print(self.resource_names[x] + ": " + "O"*self.resources[x] + "(" + str(self.resources[x]) + ")")
+                print(self.resource_names[x] + ": " + "X"*self.resources[x] + "(" + str(self.resources[x]) + " units)")
             else:
                 print(self.resource_names[x] + ": " + str(self.resources[x]))
         print("###############")
@@ -74,7 +74,7 @@ class Player:
                               + self.resource_names[x] + " because you reached the maximum of " + str(self.MAX_SANITY))
                         self.resources[x] = self.MAX_SANITY
                 elif other[x] < 0:
-                    if (other[x] + self.resources[x]) <= 0 and x is not 0:
+                    if (self.resources[x]) < 0 and x is not 0:
                         print("You have no more " + self.resource_names[x] + " to lose.")
                         self.resources[x] = 0
                     else:
@@ -163,8 +163,8 @@ class Player:
         hunger = self.resources[5]+1  # Crew + yourself
         difference = self.resources[1] - hunger
         if difference < 0:
-            print("You are starving." + str(-difference) + " crew members perish and it stresses you.")
-            self.add([0, 0, 0, 0, 5*difference, -difference, 0])
+            print("You are starving. " + str(-difference) + " crew members perish and it stresses you.")
+            self.add([0, 0, 0, 0, 5*difference, difference, 0])
         else:
             print("You feed your party " + str(hunger) + " " + self.resource_names[1] + ".")
             self.add([0, -hunger, 0, 0, 0, 0, 0])
