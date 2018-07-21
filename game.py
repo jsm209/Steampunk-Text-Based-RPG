@@ -151,7 +151,11 @@ def text_box(text):
 def game_handler(doom):
 
     # Game setup
-    player_count = input("How many people are playing Lugmere's Loss? ")
+    player_count="-1"
+    while player_count.isdigit() is False:
+        player_count = input("How many people are playing Lugmere's Loss? ")
+        if player_count.isdigit() is False:
+            print("Please enter a number greater than 0.")
     players_normal = []
     for x in range(0, int(player_count)):
         players_normal.append(Player())

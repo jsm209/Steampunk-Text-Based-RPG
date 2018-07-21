@@ -37,7 +37,7 @@ class Player:
             if x == 4:
                 print(self.resource_names[x] + ": " + self.stress_status())
             elif x is not 0:
-                print(self.resource_names[x] + ": " + "X"*self.resources[x] + "(" + str(self.resources[x]) + " units)")
+                print(self.resource_names[x] + ": " + "O"*self.resources[x] + "(" + str(self.resources[x]) + " units)")
             else:
                 print(self.resource_names[x] + ": " + str(self.resources[x]))
         print("###############")
