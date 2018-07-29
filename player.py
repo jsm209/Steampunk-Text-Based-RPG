@@ -1,13 +1,5 @@
-from dice import *
-
 # A player keeps track of important resources, and can display the amount of each resource they have.
 # Additionally, the player has built in ways, such as mining, docking, and working, to gain more resources.
-
-# POSSIBLE CHANGES (Using a dictionary instead of a list for the resources.)
-# Make the resources into a dictionary, and make the given list in the add method a dictionary.
-# Then change the add method to find the key with each corresponding resource name and add them that way..
-# One reason not to do this is because dictionaries take up more memory, and it takes more work to create
-# it each time, and I'm the only one implementing it so a list makes more sense..?
 
 
 class Player:

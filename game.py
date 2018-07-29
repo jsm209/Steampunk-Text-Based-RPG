@@ -11,12 +11,11 @@ import time
 #############
 # CONSTANTS #
 #############
-STARTING_DOOM = 13
-current_tamper = 0
-TEXT_SPEED = 0.3
+STARTING_DOOM = 13  # Where the turns start to count down from.
+TEXT_SPEED = 0.3  # How much time in milliseconds to wait between printing lines of text.
 
 d = Dice()  # A dice to share with all the game mechanics.
-n = Name()  # A name generate to share with all the writing.
+n = Name()  # A name generator to share with all the writing.
 
 
 # Pre: Given a string of text
@@ -25,11 +24,6 @@ def print_slow(str=""):
     for line in str.splitlines():
         print(line)
         time.sleep(TEXT_SPEED)
-
-#    for letter in str:
-#        sys.stdout.write(letter)
-#        sys.stdout.flush()
-#        time.sleep(TEXT_SPEED)
 
 
 # Post: Waits for user to press ENTER.
@@ -151,7 +145,7 @@ def text_box(text):
 def game_handler(doom):
 
     # Game setup
-    player_count="-1"
+    player_count = "-1"
     while player_count.isdigit() is False:
         player_count = input("How many people are playing Lugmere's Loss? ")
         if player_count.isdigit() is False:
@@ -166,20 +160,20 @@ def game_handler(doom):
 
     opening_story()
 
-    # Regular game play
+    # Regular game play.
     players_insane = []
     while doom is not 0:
         text_box("The doom counter sits at " + str(doom) + "...")
 
-        # Normal Condition
+        # Player has a normal condition
         for player in players_normal:
             if has_lost(player) is False:
-                doom += process_turn(player)
+                doom += process_turn(player)  # Player actions impact the doom counter.
                 press_enter()
                 player.update()
                 press_enter()
 
-            # Currently insane condition
+            # Player has a disabled condition
             elif player in players_insane:
                 print_slow(player.get_name() + " is currently insane. They try to snap out of it.")
                 if d.roll(20) >= 15:
@@ -190,7 +184,7 @@ def game_handler(doom):
                     print_slow(player.get_name() + " remains delusional...")
             else:
 
-                # First time disabled
+                # Checks to see if the player gains a disabled condition
                 if player.resources[4] == 0:
                     loss_by_sanity()
                     print_slow(player.get_name() + " has gone insane...")
@@ -200,7 +194,7 @@ def game_handler(doom):
                     player.add([0, 0, 0, 2, 0, 0, 0])
         doom -= 1
 
-    # The Maw encounters only players fit to encounter
+    # The Maw (End game boss) encounters only players fit to encounter (does not have disabled condition)
     for player in players_normal:
         if has_lost(player) is False:
             text_box(player.get_name() + " encounters The Maw.")
