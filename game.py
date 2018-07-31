@@ -145,10 +145,9 @@ def text_box(text):
 def game_handler(doom):
 
     # Game setup
-    player_count = "-1"
-    while player_count.isdigit() is False:
+    while True:
         player_count = input("How many people are playing Lugmere's Loss? ")
-        if player_count.isdigit() is False:
+        if not player_count.isdigit():
             print("Please enter a number greater than 0.")
     players_normal = []
     for x in range(0, int(player_count)):
@@ -202,11 +201,8 @@ def game_handler(doom):
         else:
             text_box(player.get_name() + " is disabled and does not encounter The Maw.")
     text_box("FINAL SCORES")
-    i = 0
-    while i < len(players_normal):
-        print_slow(players_normal[i].get_name() + "'s SCORE IS: " + str(players_normal[i].score))
-        i += 1
-
+    for player in players_normal:
+        print_slow("{}'s SCORE IS: {}".format(player.name, player.score))
 
 # Pre: Given a valid player object,
 # Post: Processes one full turn for the player. After getting a course of action from the player, it performs it
@@ -253,17 +249,20 @@ def process_turn(player):
 # Pre: Given a list of strings that represent a choice the player can make,
 # Post: Returns an integer representing the choice the player picked.
 def pick_choice(choices):
-    for x in choices:
-        print(str(choices.index(x)+1) + ": " + x)
+    for index, value in enumerate(choices):
+        print("{}: {}".format(index + 1, value))
+
     while True:
-        decision = None
         try:
-            decision = int(input("ENTER 1-" + str(len(choices)) + ": "))
-        except ValueError or decision not in range(1, len(choices)+1):
-            print("That isn't an option.")
-            continue
-        if decision in range(1, len(choices)+1):
-            return decision
+            decision = int(input("ENTER 1-{}: ".format(len(choices))))
+            if 1 <= decision <= len(choices):
+                return decision
+
+        except ValueError:
+            pass
+
+        print("That isn't an option.")
+
 
 
 # Pre: Given a player object and an integer that represents the degree of tampering/how much to impact the doom counter
